@@ -102,7 +102,7 @@ writeline(fd, crypt.base64encode(hmac))
 
 --type 0 µÇÂ½1 ×¢²á
 local token = { --µÇÂ¼
-	type = "0",
+	type = "1",
 	server = "gameserver",
 	user = "hello123@163.com",
 	pass = "123456",

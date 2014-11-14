@@ -53,6 +53,16 @@ load_role 2 {
 	}
 }
 
+upgrade_build 3 {
+	request {
+		id 0 : integer
+		index 1 : integer
+	}
+	response {
+		result 0 : integer
+	}
+}
+
 ]]
 
 proto.s2c = sprotoparser.parse [[
