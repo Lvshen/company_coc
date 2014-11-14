@@ -30,6 +30,11 @@ proto.c2s = sprotoparser.parse [[
 	build 10 : *build_info		
 }
 
+heartbeat 0 {
+	response {
+		ok 0 : integer
+	}
+}
 
 create_role 1 {			
 	request {

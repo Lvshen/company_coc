@@ -189,7 +189,7 @@ local function print_request(name, args)
 	print("REQUEST", name)
 	if args then
 		for k,v in pairs(args) do
-			print(k,v)
+			print(k,v)	
 		end
 	end
 end
@@ -209,6 +209,7 @@ local function print_response(session, args)
 end
 
 local function print_package(t, ...)
+	print("~~~~~~~~~", ...)
 	if t == "REQUEST" then
 		print_request(...)
 	else
@@ -224,7 +225,6 @@ local function dispatch_package()
 		if not v then
 			break
 		end
-
 		print_package(host:dispatch(v))
 	end
 end
@@ -245,7 +245,8 @@ assert(result == "200 OK")
 
 
 
-send_request("load_role")
+--send_request("load_role")
+--send_request("heartbeat")
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()
@@ -253,8 +254,8 @@ while true do
   		--send_request("get", { what = cmd })
   		--send_request("set", { what = "hello", value = "world" })
   	else
-  		--send_request("heartbeat", {heart = "123"} )
-  		socket.usleep(5000)
+  		send_request("heartbeat")
+  		socket.usleep(5000000)
   		--socket.usleep(100)
   	end
   end

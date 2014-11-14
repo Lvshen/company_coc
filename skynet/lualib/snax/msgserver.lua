@@ -209,11 +209,11 @@ function server.start(conf)
 
 		if result == nil then
 			result = "200 OK"
-			--return to agent
 		end
 
 		socketdriver.send(fd, netpack.pack(result))
 
+		--call agent
 		if result ==  "200 OK" then
 			local u = assert(connection[fd], "invalid fd")
 			local ok = pcall(conf.agent_handler, u.username, fd)

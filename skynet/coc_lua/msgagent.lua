@@ -30,6 +30,11 @@ function REQUEST:load_role()
 	return {result = 0, roleinfo = user_info}
 end
 
+function REQUEST.heartbeat(source, fd)
+	heartbeat_time = skynet.time()
+	return {ok = 0}
+end
+
 local function request(name, args, response)
 	print("-------------requies["..name.."]", uuid)
 	local f = assert(REQUEST[name])
@@ -73,7 +78,7 @@ local userid, subid
 
 local CMD = {}
 
-local function send_package(pack, fd)
+local function send_package(fd, pack)
 	local size = #pack
 	local package = string.char(bit32.extract(size,8,8)) ..
 		string.char(bit32.extract(size,0,8))..
@@ -115,11 +120,15 @@ end
 
 function CMD.heartbeat(source, fd)
 	heartbeat_time = skynet.time()
+	print("fd = ", fd, heartbeat_time)
 	skynet.fork(function()
-		while true do
-			send_package(send_request "heartbeat", fd)
-			skynet.sleep(500)
+	while true do
+		if (skynet.time() - heartbeat_time) > 60 then
+			logout()
+			break
 		end
+		skynet.sleep(500)
+	end
 	end)
 end
 
