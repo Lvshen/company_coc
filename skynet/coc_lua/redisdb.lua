@@ -93,13 +93,12 @@ function command.InitUserRole(id, name)
 	table.insert(t, 1, data_key)
 	db:hmset(t)
 	t = {}
-	local i = 0
 	for key, value in pairs(init_role.build) do
-		i = i + 1
-		table.insert(t, i)
 		if type(value) == "table" then
+			table.insert(t, value.index)
 			table.insert(t, skynet.serialize(value))
 		else
+			table.insert(t, key)
 			table.insert(t, value)
 		end
 	end
@@ -135,6 +134,37 @@ function command.LoadRoleAllInfo(id)
 	end
 	return r
 	
+end
+
+local function UpdateData(id, tab_data)
+	assert(type(tab_data) == "table", "data is error")
+	local key = string.format("role:[%d]:data", id)
+	assert(db:exists(key) == 1, "key:"..key.."not exists")
+	local t = {}
+	for k, v in pairs(tab_data) do
+		table.insert(t, k)
+		table.insert(t, v)		
+	end
+	table.insert(t, 1, key)
+	db:hmset(t)
+end
+
+local function UpdateBuild(id, tab_build)
+	assert(type(tab_build) == "table", "data is error")
+	local key = string.format("role:[%d]:build", id)
+	assert(db:exists(key) == 1, "key:"..key.."not exists")
+	local t = {}
+	for k, v in pairs(tab_build) do
+		assert(type(value), "value is not table")
+		table.insert(t, value.index)
+		table.insert(t, skynet.serialize(value))
+	end
+end
+
+function command.UpdateRoleInfo(id, tab)
+	for k, v in pairs(tab) do
+		
+	end
 end
 
 skynet.start(function()

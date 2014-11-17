@@ -14,7 +14,7 @@ local client_fd
 local heartbeat_time
 
 local uuid
-local user_info
+local role_info
 
 function REQUEST:handshake()
 	return { msg = "Welcome to skynet, I will send heartbeat every 5 sec." }
@@ -27,12 +27,16 @@ function REQUEST:create_role()
 end
 
 function REQUEST:load_role()
-	return {result = 0, roleinfo = user_info}
+	return {result = 0, roleinfo = role_info}
 end
 
 function REQUEST.heartbeat(source, fd)
 	heartbeat_time = skynet.time()
 	return {ok = 0}
+end
+
+function REQUEST:buildaction()
+	
 end
 
 local function request(name, args, response)
@@ -72,6 +76,21 @@ skynet.register_protocol {
 	end
 }
 
+function UpdateRoleInfo(changed_info)
+	--example : changed_info = {level = 1, ..., { id = 100, level = 1, index = 1,  x = 35, y = 20 },...}
+	for k, v in pairs(changed_info) do
+		if type(v) ~= "table" then
+			role_info[k] = v
+		else
+			for _k, _v in pairs(role_info["build"]) do
+				if _v["index"] == v["index"] then
+					_v = v
+					break
+				end
+			end
+		end
+	end
+end
 
 local gate
 local userid, subid
@@ -87,6 +106,16 @@ local function send_package(fd, pack)
 	socket.write(fd, package)
 end
 
+local action = {
+	["goldcoin"] = function(value) 
+		role_info["goldcoin"] = role_info["goldcoin"] + value
+	end,
+}
+
+function CMD.update(key, value)
+	action[key] (value)
+end
+
 function CMD.login(source, uid, sid, secret, id)
 	-- you may use secret to make a encrypted data stream
 	skynet.error(string.format("%s is login", uid))
@@ -95,7 +124,7 @@ function CMD.login(source, uid, sid, secret, id)
 	subid = sid
 	uuid = id
 	-- you may load user data from database
-	user_info = skynet.call("REDISDB", "lua", "LoadRoleAllInfo", uuid)
+	role_info = skynet.call("REDISDB", "lua", "LoadRoleAllInfo", uuid)
 end
 
 local function logout()

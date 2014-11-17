@@ -17,7 +17,33 @@ local build_config = {
 	}
 }
 
-function upgrade_build(id, index)
-	
+local acitont = {
+	[0] = function (t)
+		
+	end,
+}
+
+local function upgrade_build()
+	local index = buildaction.upgrade_build.index
+	local build = roleinfo.build
+	if build[index] == nil then
+		return 3
+	end
 end
 
+function build_operate(buildaction, roleinfo)
+	action[buildaction.type](buildaction)
+end
+
+skynet.start(function()
+	skynet.dispatch("lua", function(session, address, cmd, ...)
+		local f = command[cmd]
+		if f then
+			skynet.ret(skynet.pack(f(...)))
+		else
+			error(string.format("Unknown command %s", tostring(cmd)))
+		end
+	end)
+	skynet.register "BUILDOPERATE"
+	print("build service start")
+end)
