@@ -137,6 +137,46 @@ local function place_build(action, role_info)
 	return 0, index, changeinfo	
 end
 
+local function collect_resource(action, role_info)
+	local index = action.collect_resource.index
+	local build_id = action.collect_resource.id
+	local build = role_info.build.index
+	if build == nil then
+		skynet.error("(role not this build) build id : %d is not exist!", tonumber(build_id))
+		return 3
+	end
+	--assert(build_config[build_id] ~= nil, "build id : "..build_id.." is not exist!")
+	if build_config[build_id] == nil then
+		skynet.error("(clent request error) build id : %d is not exist!", tonumber(build_id))
+		return 3
+	end
+
+	if build_finish(build) == false then
+		skynet.error("build id : %d at building not finish!", tonumber(build_id))
+		return 6
+	end
+	
+	local build_lv = build.level
+	local config = buibuild_config[build_id].build_lv
+	assert(config ~= nil, "this is logic error")
+	
+end
+
+local function move_build(action, role_info)
+	local index = action.move_build.index
+	local build_id = action.move_build.id
+	local build = role_info.build.index
+	if build == nil then
+		skynet.error("(role not this build) build id : %d is not exist!", tonumber(build_id))
+		return 3
+	end
+	build.x = move_build.x
+	build.y = move_build.y
+	local changeinfo = {}
+	table.insert(changeinfo, build)
+	return 0, index, changeinfo
+end
+
 function build_operate(buildaction, roleinfo)
 	action[buildaction.type](buildaction)
 end
