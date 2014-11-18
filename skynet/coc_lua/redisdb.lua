@@ -70,10 +70,10 @@ function command.InitUserRole(id, name)
 	local init_role = {
 		 name = name, level = 1, exp = 0, points = 0, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
 		 build = {
-		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20 },
-			{ id = 103, level = 1, index = 2,  x = 40, y = 25 },
-		 	{ id = 105, level = 1, index = 3,  x = 45, y = 30 },
-	        	{ id = 108, level = 1, index = 4,  x = 55, y = 35 },
+		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, finsh
+			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 },
+		 	{ id = 105, level = 1, index = 3,  x = 45, y = 30, finish = 1 },
+	        	{ id = 108, level = 1, index = 4,  x = 55, y = 35, finish = 1 },
 	        }
 	}
 	local data_key = string.format("role:[%d]:data", id)
@@ -107,6 +107,21 @@ function command.InitUserRole(id, name)
 	return init_role
 end
 
+local function re_build_finish(build)
+	if build.finish == 1 then
+		local now = skynet.time()
+		if (now - build.build_time) > build.remain_time then
+			build.finish = 0
+			build.remain_time = 0
+			return true
+		else
+			build.remain_time = now - build.build_time 
+		end
+		return true
+	end
+	return false
+end
+
 function command.LoadRoleAllInfo(id)
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)
@@ -116,8 +131,8 @@ function command.LoadRoleAllInfo(id)
 	end
 	
 	db:multi()
-	db:hgetall(data_key)
-	db:hgetall(build_key)
+	db:hgetall(data_key) --k = 1
+	db:hgetall(build_key) --k = 2
 	local t = db:exec()
 	local r = {}
 	r["build"]={}
@@ -127,8 +142,14 @@ function command.LoadRoleAllInfo(id)
 			       r[v[2*i - 1]] = v[2*i]
 			  end			
 		else
+			local _t = r["build"]
 			for i = 1, #v/2 do
-				table.insert(r["build"], table.loadstring(v[2*i]))
+				local temp_t = table.loadstring(v[2*i])
+				if re_build_finish(temp_t) == true then
+					UpdateBuild(temp_t)
+				end
+				 _t [v[2*i - 1]] = temp_t
+				--table.insert(r["build"], _t.index, table.loadstring(v[2*i]))
 			end
 		end
 	end
@@ -162,9 +183,35 @@ local function UpdateBuild(id, tab_build)
 end
 
 function command.UpdateRoleInfo(id, tab)
+	assert(type(tab) == "table", "data is error")
+	local data_key = string.format("role:[%d]:data", id)
+	local build_key = string.format("role:[%d]:build", id)
+	local data_t = {}
+	local build_t = {}
+	local empty_data = true
+	local empty_build = true
 	for k, v in pairs(tab) do
-		
+		if type(v) == "table" then
+			if k == "build" then
+				local tab_build = v
+				for _k, _v in pairs(v) do
+					empty_build = false
+					table.insert(build_t, _v["index"])
+					table.insert(build_t, v)
+				end
+			end
+		else
+			empty_data = false
+			table.insert(data_t, k)
+			table.insert(data_t, v)
+		end
 	end
+	if empty_data == false then
+		db:hmset(data_t)
+	end
+	if empty_build == false then
+		db:hmset(build_t)
+	end 
 end
 
 skynet.start(function()

@@ -24,12 +24,117 @@ local acitont = {
 	end,
 }
 
-local function upgrade_build()
-	local index = buildaction.upgrade_build.index
-	local build = roleinfo.build
-	if build[index] == nil then
+local function build_finish(build)
+	if build.finish == 0 then
+		local now = skynet.time()
+		if (now - build.build_time) > build.remain_time then
+			build.finish = 1
+			build.remain_time = 0
+			build.level = build.level + 1
+			return true
+		else
+			build.remain_time = now - build.build_time 
+		end
+		--skynet.error("build id : %d at building not finish!", tonumber(build_id))
+		return false
+	end
+	return true
+end
+
+local function upgrade_build(action, role_info)
+	local index = action.upgrade_build.index
+	local build_id = action.upgrade_build.id
+	local build = role_info.build.index
+	if build == nil then
+		skynet.error("(role not this build) build id : %d is not exist!", tonumber(build_id))
 		return 3
 	end
+	--assert(build_config[build_id] ~= nil, "build id : "..build_id.." is not exist!")
+	if build_config[build_id] == nil then
+		skynet.error("(clent request error) build id : %d is not exist!", tonumber(build_id))
+		return 3
+	end
+
+	if build_finish(build) == false then
+		skynet.error("build id : %d at building not finish!", tonumber(build_id))
+		return 6
+	end
+	
+	local build_lv = build.level
+	local config = buibuild_config[build_id].(build_lv + 1)
+	--assert(config ~= nil, "build level is Max")
+	if config == nil then
+		skynet.error("(clent request error) build id : %d level is (%d)Max, can't upgrade!", tonumber(build_id), build_lv + 1)
+		return 5
+	end
+	local changeinfo = {}
+	local need_money = config.build_money
+	local money_type = config.build_money_type
+	local have_money = have_money or 0
+	if build_money_type == 0 and role_info["goldcoin"] >= need_money then
+		have_money = role_info["goldcoin"]
+		changeinfo["goldcoin"] = have_money - need_money
+	else if build_money_type == 1 and role_info["water"] >= need_money then
+		have_money = role_info["water"]
+		changeinfo["water"] = have_money - need_money
+	else if build_money_type == 2 and role_info["gem"] >= need_money then
+		have_money = role_info["gem"]
+		changeinfo["gem"] = have_money - need_money
+	else 
+		skynet.error(" build id : %d  money is not enough!(%d/%d/%d)", tonumber(build_id), money_type, need_monye, have_money)
+		return 2
+	end
+	local now = skynet.time()
+	build["build_time"] = now
+	build["remain_time"] = config.build_time
+	if config.build_time == 0 then
+		build["finish"] = 1
+		build["level"] = build_lv + 1
+	else
+		build["finish"] = 0
+	end
+	table.insert(changeinfo, build)
+	return 0, index, changeinfo
+end
+
+local function place_build(action, role_info)
+	local build_id = action.place_build.id
+	local config = buibuild_config[build_id].[1]
+	if config == nil then
+		skynet.error("(client request error) build id : %d is not exist!", tonumber(build_id))
+		return 3
+	end
+	local changeinfo = {}
+	local need_money = config.build_money
+	local money_type = config.build_money_type
+	local have_money = have_money or 0
+	if build_money_type == 0 and role_info["goldcoin"] >= need_money then
+		have_money = role_info["goldcoin"]
+		changeinfo["goldcoin"] = have_money - need_money
+	else if build_money_type == 1 and role_info["water"] >= need_money then
+		have_money = role_info["water"]
+		changeinfo["water"] = have_money - need_money
+	else if build_money_type == 2 and role_info["gem"] >= need_money then
+		have_money = role_info["gem"]
+		changeinfo["gem"] = have_money - need_money
+	else 
+		skynet.error(" build id : %d  money is not enough!(%d/%d/%d)", tonumber(build_id), money_type, need_monye, have_money)
+		return 2
+	end
+	changeinfo["build_count"] = role_info["build_count"] + 1
+	local now = skynet.time()
+	local build = place_build
+	build["build_time"] = now
+	build["remain_time"] = config.build_time
+	build["level"] = 1
+	build["index"] = role_info["build_count"] + 1
+	if config.build_time == 0 then
+		build["finish"] = 1
+	else
+		build["finish"] = 0
+	end
+	table.insert(changeinfo, build)
+	return 0, index, changeinfo	
 end
 
 function build_operate(buildaction, roleinfo)
@@ -48,3 +153,4 @@ skynet.start(function()
 	skynet.register "BUILDOPERATE"
 	print("build service start")
 end)
+

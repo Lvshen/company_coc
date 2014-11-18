@@ -102,7 +102,7 @@ writeline(fd, crypt.base64encode(hmac))
 
 --type 0 µÇÂ½1 ×¢²á
 local token = { --µÇÂ¼
-	type = "1",
+	type = "0",
 	server = "gameserver",
 	user = "hello123@163.com",
 	pass = "123456",
@@ -246,7 +246,7 @@ assert(result == "200 OK")
 
 
 --send_request("load_role")
---send_request("heartbeat")
+send_request("create_role", {name = "dh"})
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()

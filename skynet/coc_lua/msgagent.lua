@@ -76,20 +76,27 @@ skynet.register_protocol {
 	end
 }
 
+--update role_info
 function UpdateRoleInfo(changed_info)
-	--example : changed_info = {level = 1, ..., { id = 100, level = 1, index = 1,  x = 35, y = 20 },...}
+	--example : changed_info = {level = 1, ..., build = {{ id = 100, level = 1, index = 1,  x = 35, y = 20 },{...},...}}
+	local tab_data = {}
+	local tab_build = {}
 	for k, v in pairs(changed_info) do
-		if type(v) ~= "table" then
-			role_info[k] = v
-		else
-			for _k, _v in pairs(role_info["build"]) do
-				if _v["index"] == v["index"] then
-					_v = v
-					break
+		if type(v) == "table" then
+			if k == "build" then
+				tab_build = v
+				local t = role_info["build"]
+				for _k, _v in pairs(v) do
+					local index = _v["index"]
+					t[indxe] = _v
 				end
 			end
+		else
+			tab_data[k] = v
+			role_info[k] = v
 		end
 	end
+	skynet.call("REDISDB", "lua", "UpdateRoleInfo", uuid, changed_info)
 end
 
 local gate
