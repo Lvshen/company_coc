@@ -1,8 +1,36 @@
-
+--[[ build_id 
+   100  大本营           
+   101  圣水收集器     
+   102  圣水瓶           
+   103  金矿              
+   104  储金罐           
+   105  建筑工人小屋  
+   106  暗黑重油罐     
+   107  暗黑重油钻井  
+   108  兵营              
+   109  训练营           
+   110  试验室           
+   111  法术工厂        
+   112  野蛮人之王     
+   113  暗黑训练营     
+   114  弓箭女皇        
+   115  加农炮           
+   116  箭塔              
+   117  城墙              
+   118  迫击炮           
+   119  隐形炸弹        
+   120  防空火箭        
+   121  隐形弹簧        
+   122  法师塔           
+   123  空中炸弹        
+   124  巨型炸弹        
+   125  特斯拉电磁塔  
+   126  搜空地雷        
+   127  X连弩             
+   128  地狱之塔 
+]]
 
 local skynet = require "skynet"
-
---local build_id = {[1001] = "野蛮人", [1]}
 
 local build_config = {
 	[100] = {
@@ -29,6 +57,32 @@ local build_config = {
 		[10] = {"blood" = 420, "build_money" = 84000, "build_money_type" = 1, "max_value" = 100000, "produce_speed" = 2500, "build_time" = 345600},
 		[11] = {"blood" = 450, "build_money" = 168000, "build_money_type" = 1, "max_value" = 150000, "produce_speed" = 3000, "build_time" = 518400},
 	}
+}
+
+--大本营等级基础限制其他建筑最高等级
+local build_lvlimit = {
+	[1] = { [103] = 2, [101] = 2, [107] = 2, [104] = 1, [102] = 1, [106] = 1, [108] = 3, [115] = 2 },
+	[2] = { [103] = 4, [101] = 4, [107] = 4, [104] = 3, [102] = 3, [106] = 3, [108] = 4, [115] = 3, [116] = 2, [117] = 2 },
+	[3] = { [103] = 6, [101] = 6, [107] = 6, [104] = 6, [102] = 6, [106] = 6, [108] = 5, [110] = 1, [115] = 4, [116] = 3, [117] = 3, [118] = 1 },
+	[4] = { [103] = 8, [101] = 8, [107] = 8, [104] = 8, [102] = 8, [106] = 8, [108] = 6, [110] = 2, [115] = 5, [116] = 4, [117] = 4, [118] = 2, [120] = 2, [123] = 2, [126] = 2 },
+	[5] = { [103] = 10, [101] = 10, [107] = 10, [104] = 9, [102] = 9, [106] = 9, [108] = 7, [110] = 3, [111] = 1], [115] = 6, [116] = 6, [117] = 5, [118] = 3, [120] = 3, [123] = 3, [126] = 3, [122] = 2 },
+	[6] = { [103] = 10, [101] = 10, [107] = 10, [104] = 10, [102] = 10, [106] = 10, [108] = 8, [110] = 4, [111] = 2, [115] = 7, [116] = 7, [117] = 6, [118] = 4, [120] = 4, [123] = 4, [126] = 4, [122] = 3 },
+	[7] = { [103] = 11, [101] = 11, [107] = 11, [104] = 11, [102] = 11, [106] = 11, [108] = 9, [110] = 5, [111] = 3, [115] = 8, [116] = 8, [117] = 7, [118] = 5, [120] = 5, [123] = 5, [126] = 5, [122] = 4, [125] = 3 },
+	[8] = { [103] = 11, [101] = 11, [107] = 11, [104] = 11, [102] = 11, [106] = 11, [108] = 10, [110] = 6,[111] = 3, [115] = 10, [116] = 10, [117] = 8, [118] = 6, [120] = 6, [123] = 6, [126] = 6, [122] = 6, [125] = 6 },
+	[9] = { [103] = 11, [101] = 11, [107] = 11, [104] = 11, [102] = 11, [106] = 11,[108] = 10, [110] = 7, [111] = 4, [115] = 11, [116] = 11, [117] = 10, [118] = 7, [120] = 7, [123] = 7, [126] = 7, [122] = 7, [125] = 6, [127] = 3 },
+}
+
+--数目限制
+local build_numlimit = {
+	[1] = { [103] = 1, [101] = 1, [104] = 1, [102] = 1, [108] = 1, [115] = 2 },
+	[2] = { [103] = 2, [101] = 2, [104] = 1, [102] = 1, [108] = 2, [115] = 2, [116] = 1, [117] = 25 },
+	[3] = { [103] = 3, [101] = 3, [104] = 2, [102] = 2, [108] = 2, [110] = 1, [115] = 2, [116] = 1, [117] =50, [118] = 1, [119] = 2 },
+	[4] = { [103] = 4, [101] = 4, [104] = 2, [102] = 2, [108] = 3, [110] = 1, [115] = 2, [116] = 2, [117] = 75, [118] = 1, [119] = 2, [120] = 1, [121] = 2 },
+	[5] = { [103] = 5, [101] = 5, [104] = 2, [102] = 2, [108] = 3, [110] = 1, [111] = 1, [115] = 3, [116] = 3, [117] = 100, [118] = 1, [119] = 4, [120] = 1, [121] = 2, [122] = 1, [123] = 2 },
+	[6] = { [103] = 6, [101] = 6, [104] = 2, [102] = 2, [108] = 3, [110] = 1, [111] = 1, [115] = 3, [116] = 3, [117] = 125, [118] = 2, [119] = 4, [120] = 1, [121] = 4, [122] = 2, [123] = 2, [124] = 1 },
+	[7] = { [103] = 6, [101] = 6, [104] = 2, [102,2],[106,1],[108,4],[110,1],[111,1],[115,5],[116,4],[117,150],[118,3],[119,6],[120,2],[121,4],[122,2],[123,2],[124,2],[126,1],[125,2] },
+	[8] = { [103] = 6, [101] = 6,[107,1],[104,3],[102,3],[106,1],[108,4],[110,1],[111,1],[115,5],[116,5],[117,200],[118,3],[119,6],[120,2],[121,6],[122,3],[123,3],[124,3],[126,2],[125,3] },
+	[9] = { [103] = 6, [101] = 6,[107,2],[104,4],[102,4],[106,1],[108,4],[110,1],[111,1],[115,5],[116,4],[117,200],[118,3],[119,6],[120,2],[121,6],[122,3],[123,3],[124,3],[126,3],[125,4],[128,2] },
 }
 
 local buildoperate = {}
@@ -73,9 +127,19 @@ local function upgrade_build(action, role_info)
 	local config = buibuild_config[build_id].(build_lv + 1)
 	--assert(config ~= nil, "build level is Max")
 	if config == nil then
-		skynet.error("(clent request error) build id : %d level is (%d)Max, can't upgrade!", tonumber(build_id), build_lv + 1)
+		skynet.error("(clent request error) build id : %d level is (%d)Max, can't upgrade!", tonumber(build_id), build_lv)
 		return 5
 	end
+
+	local camp_lv = role_info.build[1].level
+	assert(camp_lv ~= nil, "roleinfo error~")
+	local limit_config = build_lvlimit.camp_lv
+	assert(limit_config ~= nil, "build_lvlimit config error~"..camp_lv)
+	if limit_config.build_id == nil or build_lv >= limit_config.build_id then
+		skynet.error("build id : %d level is (%d) Max in allow, can't upgrade!", tonumber(build_id), build_lv )
+		return 5
+	end
+	
 	local changeinfo = {}
 	local need_money = config.build_money
 	local money_type = config.build_money_type
@@ -106,6 +170,18 @@ local function upgrade_build(action, role_info)
 	return 0, index, changeinfo
 end
 
+local function build_count(build_id, build_t)
+	assert(build_t ~= nil, "build table is nil")
+	local count = count or 0
+	for k, v in pairs(build_t) do
+		assert(type(v) == "type", "build table element not all table")
+		if build_t == v.id then
+			count = count + 1
+		end
+	end
+	return count
+end
+
 local function place_build(action, role_info)
 	local build_id = action.place_build.id
 	local config = buibuild_config[build_id].[1]
@@ -113,6 +189,17 @@ local function place_build(action, role_info)
 		skynet.error("(client request error) build id : %d is not exist!", tonumber(build_id))
 		return 3
 	end
+
+	local camp_lv = role_info.build[1].level
+	assert(camp_lv ~= nil, "roleinfo error~")
+	local limit_config = build_numlimit.camp_lv
+	--assert(limit_config ~= nil, "build_lvlimit config error~"..camp_lv)
+	local build_count = build_count(build_id)
+	if limit_config.build_id == nil or build_count >= limit_config.build_id then
+		skynet.error("build id : %d count(%d) is Max in allow, can't build!", tonumber(build_id), build_count )
+		return 4
+	end
+	
 	local changeinfo = {}
 	local need_money = config.build_money
 	local money_type = config.build_money_type

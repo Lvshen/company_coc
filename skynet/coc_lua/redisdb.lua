@@ -146,7 +146,7 @@ function command.LoadRoleAllInfo(id)
 			local _t = r["build"]
 			for i = 1, #v/2 do
 				local temp_t = table.loadstring(v[2*i])
-				if re_build_finish(temp_t) == true then
+				if temp_t.build_time ~= nil and re_build_finish(temp_t) == true then
 					UpdateBuild(temp_t)
 				end
 				 _t [v[2*i - 1]] = temp_t

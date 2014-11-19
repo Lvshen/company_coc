@@ -1,10 +1,10 @@
-package.path = "./coc_lua/protocol/?.lua;./coc_lua/build/?.lua" .. package.path
+package.path = "./coc_lua/protocol/?.lua;./coc_lua/build/?.lua;" .. package.path
 
 local skynet = require "skynet"
 local socket = require "socket"
 local sproto = require "sproto"
 local proto = require "proto"
-local buildoperate = require "buildoperate"
+--local buildoperate = require "buildoperate"
 
 local host = sproto.new(proto.c2s):host "package"
 local send_request = host:attach(sproto.new(proto.s2c))
