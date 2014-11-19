@@ -34,38 +34,38 @@ local skynet = require "skynet"
 
 local build_config = {
 	[100] = {
-		[1] = {"blood" = 80, "build_money" = 0, "build_money_type" = 0, "max_gold" = 1500, "max_water" = 1500, "build_time" = 60},
-		[2] = {"blood" = 1600, "build_money" = 1000, "build_money_type" = 0, "max_gold" = 6000, "max_water" = 6000, "build_time" = 900},
-		[3] = {"blood" = 1800, "build_money" = 4000, "build_money_type" = 0, "max_gold" = 100000, "max_water" = 100000, "build_time" = 7200},
-		[4] = {"blood" = 2000, "build_money" = 25000, "build_money_type" = 0, "max_gold" = 500000, "max_water" = 500000, "build_time" = 14400},
-		[5] = {"blood" = 2200, "build_money" = 150000, "build_money_type" = 0, "max_gold" = 1000000, "max_water" = 1000000, "build_time" = 36000},
-		[6] = {"blood" = 2400, "build_money" = 750000, "build_money_type" = 0, "max_gold" = 2000000, "max_water" = 2000000, "build_time" = 57600},
-		[7] = {"blood" = 2600, "build_money" = 1200000, "build_money_type" = 0, "max_gold" = 4000000, "max_water" = 4000000, "build_time" = 86400},
-		[8] = {"blood" = 2800, "build_money" = 2000000, "build_money_type" = 0, "max_gold" = 4000000, "max_water" = 4000000, "build_time" = 172800},
-		[9] = {"blood" = 3000, "build_money" = 4000000, "build_money_type" = 0, "max_gold" = 4000000, "max_water" = 4000000, "build_time" = 345600},
+		[1] = {blood = 80, build_money = 0, build_money_type = 0, max_gold = 1500, max_water = 1500, build_time = 60},
+		[2] = {blood = 1600, build_money = 1000, build_money_type = 0, max_gold = 6000, max_water = 6000, build_time = 900},
+		[3] = {blood = 1800, build_money = 4000, build_money_type = 0, max_gold = 100000, max_water = 100000, build_time = 7200},
+		[4] = {blood = 2000, build_money = 25000, build_money_type = 0, max_gold = 500000, max_water = 500000, build_time = 14400},
+		[5] = {blood = 2200, build_money = 150000, build_money_type = 0, max_gold = 1000000, max_water = 1000000, build_time = 36000},
+		[6] = {blood = 2400, build_money = 750000, build_money_type = 0, max_gold = 2000000, max_water = 2000000, build_time = 57600},
+		[7] = {blood = 2600, build_money = 1200000, build_money_type = 0, max_gold = 4000000, max_water = 4000000, build_time = 86400},
+		[8] = {blood = 2800, build_money = 2000000, build_money_type = 0, max_gold = 4000000, max_water = 4000000, build_time = 172800},
+		[9] = {blood = 3000, build_money = 4000000, build_money_type = 0, max_gold = 4000000, max_water = 4000000, build_time = 345600},
 	},
 	[103] = {
-		[1] = {"blood" = 250, "build_money" = 150, "build_money_type" = 1, "max_value" = 500, "produce_speed" = 200, "build_time" = 60},
-		[2] = {"blood" = 270, "build_money" = 300, "build_money_type" = 1, "max_value" = 1000, "produce_speed" = 400, "build_time" = 300},
-		[3] = {"blood" = 280, "build_money" = 700, "build_money_type" = 1, "max_value" = 1500, "produce_speed" = 600, "build_time" = 800},
-		[4] = {"blood" = 290, "build_money" = 1400, "build_money_type" = 1, "max_value" = 2500, "produce_speed" = 800, "build_time" = 3600},
-		[5] = {"blood" = 310, "build_money" = 3000, "build_money_type" = 1, "max_value" = 10000, "produce_speed" = 1000, "build_time" = 14400},
-		[6] = {"blood" = 320, "build_money" = 7000, "build_money_type" = 1, "max_value" = 20000, "produce_speed" = 1300, "build_time" = 43200},
-		[7] = {"blood" = 340, "build_money" = 14000, "build_money_type" = 1, "max_value" = 30000, "produce_speed" = 1600, "build_time" = 86400},
-		[8] = {"blood" = 350, "build_money" = 28000, "build_money_type" = 1, "max_value" = 50000, "produce_speed" = 1900, "build_time" = 172800},
-		[9] = {"blood" = 390, "build_money" = 56000, "build_money_type" = 1, "max_value" = 75000, "produce_speed" = 2200, "build_time" = 259200},
-		[10] = {"blood" = 420, "build_money" = 84000, "build_money_type" = 1, "max_value" = 100000, "produce_speed" = 2500, "build_time" = 345600},
-		[11] = {"blood" = 450, "build_money" = 168000, "build_money_type" = 1, "max_value" = 150000, "produce_speed" = 3000, "build_time" = 518400},
+		[1] = {blood = 250, build_money = 150, build_money_type = 1, max_value = 500, produce_speed = 200, build_time = 60},
+		[2] = {blood = 270, build_money = 300, build_money_type = 1, max_value = 1000, produce_speed = 400, build_time = 300},
+		[3] = {blood = 280, build_money = 700, build_money_type = 1, max_value = 1500, produce_speed = 600, build_time = 800},
+		[4] = {blood = 290, build_money = 1400, build_money_type = 1, max_value = 2500, produce_speed = 800, build_time = 3600},
+		[5] = {blood = 310, build_money = 3000, build_money_type = 1, max_value = 10000, produce_speed = 1000, build_time = 14400},
+		[6] = {blood = 320, build_money = 7000, build_money_type = 1, max_value = 20000, produce_speed = 1300, build_time = 43200},
+		[7] = {blood = 340, build_money = 14000, build_money_type = 1, max_value = 30000, produce_speed = 1600, build_time = 86400},
+		[8] = {blood = 350, build_money = 28000, build_money_type = 1, max_value = 50000, produce_speed = 1900, build_time = 172800},
+		[9] = {blood = 390, build_money = 56000, build_money_type = 1, max_value = 75000, produce_speed = 2200, build_time = 259200},
+		[10] = {blood = 420, build_money = 84000, build_money_type = 1, max_value = 100000, produce_speed = 2500, build_time = 345600},
+		[11] = {blood = 450, build_money = 168000, build_money_type = 1, max_value = 150000, produce_speed = 3000, build_time = 518400},
 	}
 }
 
---大本营等级基础限制其他建筑最高等级
+--大本营等级基础限制其他建筑最高等级 
 local build_lvlimit = {
 	[1] = { [103] = 2, [101] = 2, [107] = 2, [104] = 1, [102] = 1, [106] = 1, [108] = 3, [115] = 2 },
 	[2] = { [103] = 4, [101] = 4, [107] = 4, [104] = 3, [102] = 3, [106] = 3, [108] = 4, [115] = 3, [116] = 2, [117] = 2 },
 	[3] = { [103] = 6, [101] = 6, [107] = 6, [104] = 6, [102] = 6, [106] = 6, [108] = 5, [110] = 1, [115] = 4, [116] = 3, [117] = 3, [118] = 1 },
 	[4] = { [103] = 8, [101] = 8, [107] = 8, [104] = 8, [102] = 8, [106] = 8, [108] = 6, [110] = 2, [115] = 5, [116] = 4, [117] = 4, [118] = 2, [120] = 2, [123] = 2, [126] = 2 },
-	[5] = { [103] = 10, [101] = 10, [107] = 10, [104] = 9, [102] = 9, [106] = 9, [108] = 7, [110] = 3, [111] = 1], [115] = 6, [116] = 6, [117] = 5, [118] = 3, [120] = 3, [123] = 3, [126] = 3, [122] = 2 },
+	[5] = { [103] = 10, [101] = 10, [107] = 10, [104] = 9, [102] = 9, [106] = 9, [108] = 7, [110] = 3, [111] = 1, [115] = 6, [116] = 6, [117] = 5, [118] = 3, [120] = 3, [123] = 3, [126] = 3, [122] = 2 },
 	[6] = { [103] = 10, [101] = 10, [107] = 10, [104] = 10, [102] = 10, [106] = 10, [108] = 8, [110] = 4, [111] = 2, [115] = 7, [116] = 7, [117] = 6, [118] = 4, [120] = 4, [123] = 4, [126] = 4, [122] = 3 },
 	[7] = { [103] = 11, [101] = 11, [107] = 11, [104] = 11, [102] = 11, [106] = 11, [108] = 9, [110] = 5, [111] = 3, [115] = 8, [116] = 8, [117] = 7, [118] = 5, [120] = 5, [123] = 5, [126] = 5, [122] = 4, [125] = 3 },
 	[8] = { [103] = 11, [101] = 11, [107] = 11, [104] = 11, [102] = 11, [106] = 11, [108] = 10, [110] = 6,[111] = 3, [115] = 10, [116] = 10, [117] = 8, [118] = 6, [120] = 6, [123] = 6, [126] = 6, [122] = 6, [125] = 6 },
@@ -80,12 +80,11 @@ local build_numlimit = {
 	[4] = { [103] = 4, [101] = 4, [104] = 2, [102] = 2, [108] = 3, [110] = 1, [115] = 2, [116] = 2, [117] = 75, [118] = 1, [119] = 2, [120] = 1, [121] = 2 },
 	[5] = { [103] = 5, [101] = 5, [104] = 2, [102] = 2, [108] = 3, [110] = 1, [111] = 1, [115] = 3, [116] = 3, [117] = 100, [118] = 1, [119] = 4, [120] = 1, [121] = 2, [122] = 1, [123] = 2 },
 	[6] = { [103] = 6, [101] = 6, [104] = 2, [102] = 2, [108] = 3, [110] = 1, [111] = 1, [115] = 3, [116] = 3, [117] = 125, [118] = 2, [119] = 4, [120] = 1, [121] = 4, [122] = 2, [123] = 2, [124] = 1 },
-	[7] = { [103] = 6, [101] = 6, [104] = 2, [102,2],[106,1],[108,4],[110,1],[111,1],[115,5],[116,4],[117,150],[118,3],[119,6],[120,2],[121,4],[122,2],[123,2],[124,2],[126,1],[125,2] },
-	[8] = { [103] = 6, [101] = 6,[107,1],[104,3],[102,3],[106,1],[108,4],[110,1],[111,1],[115,5],[116,5],[117,200],[118,3],[119,6],[120,2],[121,6],[122,3],[123,3],[124,3],[126,2],[125,3] },
-	[9] = { [103] = 6, [101] = 6,[107,2],[104,4],[102,4],[106,1],[108,4],[110,1],[111,1],[115,5],[116,4],[117,200],[118,3],[119,6],[120,2],[121,6],[122,3],[123,3],[124,3],[126,3],[125,4],[128,2] },
+	[7] = { [103] = 6, [101] = 6, [104] = 2, [102] = 2, [106] = 1, [108] = 4, [110] = 1, [111] = 1, [115] = 5, [116] = 4, [117] = 150, [118] = 3, [119] = 6, [120] = 2, [121] = 4, [122] = 2, [123] = 2, [124] = 2, [126] = 1, [125] = 2 },
+	[8] = { [103] = 6, [101] = 6, [107] = 1, [104] = 3, [102] = 3, [106] = 1, [108] = 4, [110] = 1, [111] = 1, [115] = 5, [116] = 5, [117] = 200, [118] = 3, [119] = 6, [120] = 2, [121] = 6, [122] = 3, [123] = 3, [124] = 3, [126] = 2, [125] = 3 },
+	[9] = { [103] = 6, [101] = 6, [107] = 2, [104] = 4, [102] = 4, [106] = 1, [108] = 4, [110] = 1, [111] = 1, [115] = 5, [116] = 5, [117] = 200, [118] = 3, [119] = 6, [120] = 2, [121] = 6, [122] = 3, [123] = 3, [124] = 3, [126] = 3, [125] = 4, [128] = 2 },
 }
 
-local buildoperate = {}
 
 local function build_finish(build)
 	if build.finish == 0 then
@@ -94,7 +93,7 @@ local function build_finish(build)
 			build.finish = 1
 			build.remain_time = 0
 			build.level = build.level + 1
-			return true
+			return true 
 		else
 			build.remain_time = now - build.build_time 
 		end
@@ -124,7 +123,8 @@ local function upgrade_build(action, role_info)
 	end
 	
 	local build_lv = build.level
-	local config = buibuild_config[build_id].(build_lv + 1)
+	local lv = build_lv + 1
+	local config = buibuild_config[build_id].lv
 	--assert(config ~= nil, "build level is Max")
 	if config == nil then
 		skynet.error("(clent request error) build id : %d level is (%d)Max, can't upgrade!", tonumber(build_id), build_lv)
@@ -184,7 +184,8 @@ end
 
 local function place_build(action, role_info)
 	local build_id = action.place_build.id
-	local config = buibuild_config[build_id].[1]
+	local lv = 1
+	local config = buibuild_config.build_id.lv
 	if config == nil then
 		skynet.error("(client request error) build id : %d is not exist!", tonumber(build_id))
 		return 3
@@ -309,15 +310,17 @@ local function move_build(action, role_info)
 end
 
 local acitont = {
-	[0] = upgrade_build (buildaction, roleinfo)	end,
-	[1] = place_build(buildaction, roleinfo) end,
-	[2] = collect_resource(action, roleinfo) end,
-	[3] = move_build(action, roleinfo) end,
+	[0] = function(buildaction, roleinfo) upgrade_build (buildaction, roleinfo) end,
+	[1] = function(buildaction, roleinfo) place_build(buildaction, roleinfo)  end,
+	[2] = function(buildaction, roleinfo) collect_resource(action, roleinfo)  end,
+	[3] = function(buildaction, roleinfo) move_build(action, roleinfo)  end,
 }
+
+
+local buildoperate = {}
 
 function buildoperate.build_operate(buildaction, roleinfo)
 	return action[buildaction.type](buildaction, roleinfo)
 end
 
 return buildoperate
-

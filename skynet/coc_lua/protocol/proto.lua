@@ -52,7 +52,7 @@ create_role 1 {
 #加载角色信息
 load_role 2 {
 	response {
-		result 0 : integer
+		result 0 : integer    			#0 成功1 新角色资料空
 		roleinfo 1 : role_info
 	}
 }

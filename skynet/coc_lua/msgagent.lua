@@ -4,7 +4,7 @@ local skynet = require "skynet"
 local socket = require "socket"
 local sproto = require "sproto"
 local proto = require "proto"
---local buildoperate = require "buildoperate"
+local buildoperate = require "buildoperate"
 
 local host = sproto.new(proto.c2s):host "package"
 local send_request = host:attach(sproto.new(proto.s2c))
@@ -27,7 +27,10 @@ function REQUEST:create_role()
 end
 
 function REQUEST:load_role()
-	return {result = 0, roleinfo = role_info}
+	if role_info.name == nil then
+		return {result = 1, roleinfo = {}}
+	end
+	return {result = 0, roleinfo = role_info}  
 end
 
 function REQUEST.heartbeat(source, fd)
@@ -35,7 +38,7 @@ function REQUEST.heartbeat(source, fd)
 	return {ok = 0}
 end
 
-function REQUEST:buildaction()
+function REQUEST:build_action()
 	local result, index, changeinfo, value = buildoperate.build_operate(self.buildaction, role_info)
 	if result == 0 then
 		UpdateRoleInfo(changeinfo)	

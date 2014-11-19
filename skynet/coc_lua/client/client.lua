@@ -188,28 +188,29 @@ local last = ""
 local function print_request(name, args)
 	print("REQUEST", name)
 	if args then
+		print_r(args)
+	--[[
 		for k,v in pairs(args) do
 			print(k,v)	
 		end
+	]]
 	end
 end
 
 local function print_response(session, args)
 	print("RESPONSE", session)
 	if args then
+		print_r(args)
+	--[[
 		for k,v in pairs(args) do
-			print(k)
-			if type(v) == "table" then
-				print_r(v)
-			else
-				print(v)
-			end
+			print(k, v)
 		end
+	]]
 	end
 end
 
 local function print_package(t, ...)
-	print("~~~~~~~~~", ...)
+	--print("~~~~~~~~~", ...)
 	if t == "REQUEST" then
 		print_request(...)
 	else
@@ -246,7 +247,9 @@ assert(result == "200 OK")
 
 
 --send_request("load_role")
-send_request("create_role", {name = "dh"})
+--send_request("create_role", {name = "dh"})
+local action = {type = 1, place = {id = 103, x = 20, y = 30}}
+send_request("build_action", action)
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()
@@ -254,7 +257,7 @@ while true do
   		--send_request("get", { what = cmd })
   		--send_request("set", { what = "hello", value = "world" })
   	else
-  		send_request("heartbeat")
+  		--send_request("heartbeat")
   		socket.usleep(5000000)
   		--socket.usleep(100)
   	end
