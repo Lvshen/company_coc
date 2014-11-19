@@ -86,12 +86,14 @@ load_role 2 {
 	move 4 : move_build
 }
 
+#请求与返回要求字段数目都非固定的
 #建筑操作
 build_action 3 {
 	request buildaction
 	response {
 		result 0 : integer
 		index 1 : integer
+		value 2 : integer
 	}
 }
 

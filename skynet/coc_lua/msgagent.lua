@@ -1,10 +1,10 @@
-package.path = "./coc_lua/protocol/?.lua;" .. package.path
+package.path = "./coc_lua/protocol/?.lua;./coc_lua/build/?.lua" .. package.path
 
 local skynet = require "skynet"
 local socket = require "socket"
 local sproto = require "sproto"
 local proto = require "proto"
-
+local buildoperate = require "buildoperate"
 
 local host = sproto.new(proto.c2s):host "package"
 local send_request = host:attach(sproto.new(proto.s2c))
@@ -36,7 +36,11 @@ function REQUEST.heartbeat(source, fd)
 end
 
 function REQUEST:buildaction()
-	
+	local result, index, changeinfo, value = buildoperate.build_operate(self.buildaction, role_info)
+	if result == 0 then
+		UpdateRoleInfo(changeinfo)	
+	end
+	return {result = result, index = index, value = value}
 end
 
 local function request(name, args, response)

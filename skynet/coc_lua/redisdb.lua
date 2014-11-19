@@ -67,11 +67,12 @@ function command.WriteUserAccount(email, password)
 end
 
 function command.InitUserRole(id, name)
+	local now = skynet.time()
 	local init_role = {
 		 name = name, level = 1, exp = 0, points = 0, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
 		 build = {
-		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, finsh
-			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 },
+		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, collect_time, finish
+			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 , collect_time = now},
 		 	{ id = 105, level = 1, index = 3,  x = 45, y = 30, finish = 1 },
 	        	{ id = 108, level = 1, index = 4,  x = 55, y = 35, finish = 1 },
 	        }
