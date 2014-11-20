@@ -33,13 +33,14 @@ function REQUEST:load_role()
 	return {result = 0, roleinfo = role_info}  
 end
 
-function REQUEST.heartbeat(source, fd)
+function REQUEST:heartbeat()
 	heartbeat_time = skynet.time()
 	return {ok = 0}
 end
 
 function REQUEST:build_action()
-	local result, index, changeinfo, value = buildoperate.build_operate(self.buildaction, role_info)
+	local result, index, changeinfo, value = buildoperate.build_operate(self, role_info)
+	print("build_action response ~~", result, index, changeinfo, value )
 	if result == 0 then
 		UpdateRoleInfo(changeinfo)	
 	end
@@ -47,7 +48,7 @@ function REQUEST:build_action()
 end
 
 local function request(name, args, response)
-	print("-------------requies["..name.."]", uuid)
+	print("-------------requies["..name.."]", uuid, args)
 	local f = assert(REQUEST[name])
 	local r = f(args)
 	if response then
@@ -86,20 +87,16 @@ skynet.register_protocol {
 --update role_info
 function UpdateRoleInfo(changed_info)
 	--example : changed_info = {level = 1, ..., build = {{ id = 100, level = 1, index = 1,  x = 35, y = 20 },{...},...}}
-	local tab_data = {}
-	local tab_build = {}
 	for k, v in pairs(changed_info) do
 		if type(v) == "table" then
 			if k == "build" then
-				tab_build = v
-				local t = role_info["build"]
+				local t = role_info.build
 				for _k, _v in pairs(v) do
-					local index = _v["index"]
-					t[indxe] = _v
+					local index = _v.index
+					t["index"] = _v
 				end
 			end
 		else
-			tab_data[k] = v
 			role_info[k] = v
 		end
 	end

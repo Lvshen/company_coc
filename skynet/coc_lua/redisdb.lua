@@ -1,6 +1,36 @@
 local skynet = require "skynet"
 local redis = require "redis"
+--[[
+local print = print
+local tconcat = table.concat
+local tinsert = table.insert
+local srep = string.rep
+local type = type
+local pairs = pairs
+local tostring = tostring
+local next = next
 
+local function print_r(root)
+	local cache = {  [root] = "." }
+	local function _dump(t,space,name)
+		local temp = {}
+		for k,v in pairs(t) do
+			local key = tostring(k)
+			if cache[v] then
+				tinsert(temp,"+" .. key .. " {" .. cache[v].."}")
+			elseif type(v) == "table" then
+				local new_key = name .. "." .. key
+				cache[v] = new_key
+				tinsert(temp,"+" .. key .. _dump(v,space .. (next(t,k) and "|" or " " ).. srep(" ",#key),new_key))
+			else
+				tinsert(temp,"+" .. key .. " [" .. tostring(v).."]")
+			end
+		end
+		return tconcat(temp,"\n"..space)
+	end
+	print(_dump(root, "",""))
+end
+]]
 local db
 local command = {}
 local USER_BEGINID = 10000
@@ -71,7 +101,7 @@ function command.InitUserRole(id, name)
 	local init_role = {
 		 name = name, level = 1, exp = 0, points = 0, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
 		 build = {
-		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, collect_time, finish
+		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, collect_time, finish,time_c_type(0 ½¨Ôì1Éý¼¶)
 			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 , collect_time = now},
 		 	{ id = 105, level = 1, index = 3,  x = 45, y = 30, finish = 1 },
 	        	{ id = 108, level = 1, index = 4,  x = 55, y = 35, finish = 1 },
@@ -92,6 +122,7 @@ function command.InitUserRole(id, name)
 		end		
 	end
 	table.insert(t, 1, data_key)
+	db:multi()
 	db:hmset(t)
 	t = {}
 	for key, value in pairs(init_role.build) do
@@ -105,14 +136,15 @@ function command.InitUserRole(id, name)
 	end
 	table.insert(t, 1, build_key)
 	db:hmset(t)
+	db:exec()
 	return init_role
 end
 
 local function re_build_finish(build)
-	if build.finish == 1 then
+	if build.finish == 0 then
 		local now = skynet.time()
 		if (now - build.build_time) > build.remain_time then
-			build.finish = 0
+			build.finish = 1
 			build.remain_time = 0
 			return true
 		else
@@ -144,13 +176,19 @@ function command.LoadRoleAllInfo(id)
 			  end			
 		else
 			local _t = r["build"]
+			local tab_build = {}
+			local update_flag = false
 			for i = 1, #v/2 do
 				local temp_t = table.loadstring(v[2*i])
 				if temp_t.build_time ~= nil and re_build_finish(temp_t) == true then
-					UpdateBuild(temp_t)
+					table.insert(tab_build, temp_t)
+					update_flag = true
 				end
-				 _t [v[2*i - 1]] = temp_t
+				 _t [tonumber(v[2*i - 1])] = temp_t
 				--table.insert(r["build"], _t.index, table.loadstring(v[2*i]))
+			end
+			if update_flag == true then
+				UpdateBuild(id, tab_build)
 			end
 		end
 	end
@@ -161,7 +199,7 @@ end
 local function UpdateData(id, tab_data)
 	assert(type(tab_data) == "table", "data is error")
 	local key = string.format("role:[%d]:data", id)
-	assert(db:exists(key) == 1, "key:"..key.."not exists")
+	assert(tonumber(db:exists(key)) == 1, "key:"..key.."not exists")
 	local t = {}
 	for k, v in pairs(tab_data) do
 		table.insert(t, k)
@@ -171,16 +209,20 @@ local function UpdateData(id, tab_data)
 	db:hmset(t)
 end
 
-local function UpdateBuild(id, tab_build)
+function UpdateBuild(id, tab_build)
 	assert(type(tab_build) == "table", "data is error")
 	local key = string.format("role:[%d]:build", id)
-	assert(db:exists(key) == 1, "key:"..key.."not exists")
+	skynet.print_r(tab_build)
+	assert(db:exists(key) == true, "key: "..key.." not exists")
 	local t = {}
 	for k, v in pairs(tab_build) do
-		assert(type(value), "value is not table")
-		table.insert(t, value.index)
-		table.insert(t, skynet.serialize(value))
+		if type(v) == "table" then 
+			table.insert(t, v.index)
+			table.insert(t, skynet.serialize(v))
+		end
 	end
+	table.insert(t, 1, key)
+	db:hmset(t)
 end
 
 function command.UpdateRoleInfo(id, tab)
@@ -194,11 +236,10 @@ function command.UpdateRoleInfo(id, tab)
 	for k, v in pairs(tab) do
 		if type(v) == "table" then
 			if k == "build" then
-				local tab_build = v
 				for _k, _v in pairs(v) do
 					empty_build = false
-					table.insert(build_t, _v["index"])
-					table.insert(build_t, v)
+					table.insert(build_t, _v.index)
+					table.insert(build_t, skynet.serialize(_v))
 				end
 			end
 		else
@@ -207,12 +248,16 @@ function command.UpdateRoleInfo(id, tab)
 			table.insert(data_t, v)
 		end
 	end
+	table.insert(data_t, 1, data_key)
+	table.insert(build_t, 1, build_key)
+	db:multi()
 	if empty_data == false then
 		db:hmset(data_t)
 	end
 	if empty_build == false then
 		db:hmset(build_t)
 	end 
+	db:exec()
 end
 
 skynet.start(function()

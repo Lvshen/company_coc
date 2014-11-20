@@ -247,9 +247,15 @@ assert(result == "200 OK")
 
 
 --send_request("load_role")
---send_request("create_role", {name = "dh"})
-local action = {type = 1, place = {id = 103, x = 20, y = 30}}
-send_request("build_action", action)
+send_request("create_role", {name = "dh"})
+local action = {
+		[0] = {type = 0, upgrade = {id = 103, index = 5}},
+		[1] = {type = 1, place = {id = 103, x = 20, y = 30}},
+		[2] = {type = 2, collect = {id = 103, index = 5}},
+		[3] = {type = 3, move = {id = 103, index = 5, x = 10, y = 55}}
+}
+
+send_request("build_action", action[2])
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()
