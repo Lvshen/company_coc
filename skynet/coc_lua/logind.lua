@@ -48,8 +48,8 @@ function server.auth_handler(token)
 	user = crypt.base64decode(user)
 	server = crypt.base64decode(server)
 	password = crypt.base64decode(password)
-	print(type,user,server,password)
-	if type == "0" then --µÇÂ¼
+	print( type,user,server,password)
+	if tonumber(type) == 0 then --µÇÂ¼
 		local r, _id = auth_from_db(user, password)	
 		id = _id
 		assert(r == 0, "user Auth failed r = "..r)

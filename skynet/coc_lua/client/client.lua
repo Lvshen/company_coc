@@ -6,6 +6,7 @@ local crypt = require "crypt"
 local bit32 = require "bit32"
 local proto = require "proto"
 local sproto = require "sproto"
+--local skynet = require "skynet"
 
 local print = print
 local tconcat = table.concat
@@ -102,7 +103,7 @@ writeline(fd, crypt.base64encode(hmac))
 
 --type 0 µÇÂ½1 ×¢²á
 local token = { --µÇÂ¼
-	type = "0",
+	type = 0,
 	server = "gameserver",
 	user = "hello123@163.com",
 	pass = "123456",
@@ -246,8 +247,8 @@ assert(result == "200 OK")
 
 
 
---send_request("load_role")
-send_request("create_role", {name = "dh"})
+send_request("load_role")
+--send_request("create_role", {name = "dh"})
 local action = {
 		[0] = {type = 0, upgrade = {id = 103, index = 5}},
 		[1] = {type = 1, place = {id = 103, x = 20, y = 30}},
@@ -256,15 +257,17 @@ local action = {
 }
 
 send_request("build_action", action[2])
+--send_request("build_action", action[3])
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()
   	if cmd then
+  		send_request("build_action", action[2])
   		--send_request("get", { what = cmd })
   		--send_request("set", { what = "hello", value = "world" })
   	else
   		--send_request("heartbeat")
-  		socket.usleep(5000000)
+  		--socket.usleep(5000000)
   		--socket.usleep(100)
   	end
   end

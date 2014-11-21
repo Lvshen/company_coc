@@ -22,6 +22,9 @@ end
 
 function REQUEST:create_role()
 	print("~~~~~~create_role id=", uuid, self.name)
+	if role_info.name ~= nil then
+		return {result = 1}
+	end
 	local r = skynet.call("REDISDB", "lua", "InitUserRole", uuid, self.name)
 	return {result = 0, roleinfo = r}
 end

@@ -44,7 +44,7 @@ create_role 1 {
 		name 0 : string 				#角色/村庄名字
 	}
 	response {
-		result 0 : integer
+		result 0 : integer				# 0 成功1 创建过
 		roleinfo 1 : role_info
 	}
 }
