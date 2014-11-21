@@ -5,6 +5,7 @@ local socket = require "socket"
 local sproto = require "sproto"
 local proto = require "proto"
 local buildoperate = require "buildoperate"
+local logger = require "log"
 
 local host = sproto.new(proto.c2s):host "package"
 local send_request = host:attach(sproto.new(proto.s2c))
@@ -30,6 +31,7 @@ function REQUEST:create_role()
 end
 
 function REQUEST:load_role()
+	logger.Info("test log ~~~~~~~~~~~~~~~~~~")
 	if role_info.name == nil then
 		return {result = 1, roleinfo = {}}
 	end
@@ -42,6 +44,7 @@ function REQUEST:heartbeat()
 end
 
 function REQUEST:build_action()
+	logger.Info("test log ~~~~~~~~~~~~~~~~~~")
 	local result, index, changeinfo, value = buildoperate.build_operate(self, role_info)
 	print("build_action response ~~", result, index, changeinfo, value )
 	if result == 0 then

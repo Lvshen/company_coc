@@ -2,6 +2,7 @@ package.path = "./my_examples/?.lua;" .. package.path
 local login = require "snax.loginserver"
 local crypt = require "crypt"
 local skynet = require "skynet"
+--local logger = require "log"
 
 local server = {
 	host = "127.0.0.1",
@@ -48,7 +49,7 @@ function server.auth_handler(token)
 	user = crypt.base64decode(user)
 	server = crypt.base64decode(server)
 	password = crypt.base64decode(password)
-	print( type,user,server,password)
+	print( "rrrrrrrrrrrrrrrrrrrrrrrrrrrrr", type,user,server,password)
 	if tonumber(type) == 0 then --µÇÂ¼
 		local r, _id = auth_from_db(user, password)	
 		id = _id

@@ -256,13 +256,13 @@ local action = {
 		[3] = {type = 3, move = {id = 103, index = 5, x = 10, y = 55}}
 }
 
-send_request("build_action", action[2])
+--send_request("build_action", action[2])
 --send_request("build_action", action[3])
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()
   	if cmd then
-  		send_request("build_action", action[2])
+  		--send_request("build_action", action[2])
   		--send_request("get", { what = cmd })
   		--send_request("set", { what = "hello", value = "world" })
   	else
