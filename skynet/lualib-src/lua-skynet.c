@@ -196,7 +196,7 @@ _send(lua_State *L) {
 		// send to invalid address
 		// todo: maybe throw error whould be better
 		//luaL_error(L, "skynet.session < 0 |%d", session);
-		printf("skynet.session < 0 |%d", session);
+		printf("error skynet.session < 0 |%d", session);
 		return 0;
 	}
 	//printf("send success~~~");
