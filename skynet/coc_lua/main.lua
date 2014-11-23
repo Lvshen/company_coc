@@ -15,6 +15,5 @@ skynet.start(function()
 		servername = "gameserver",
 	})
 	print("gate listen on ", 8888)
-
 	skynet.exit()
 end)

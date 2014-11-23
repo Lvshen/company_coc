@@ -162,7 +162,7 @@ _send(lua_State *L) {
 	}
 
 	int mtype = lua_type(L,4);
-	printf("mtype=%d", mtype);
+	//printf("mtype=%d", mtype);
 	switch (mtype) {
 	case LUA_TSTRING: {
 		size_t len = 0;
@@ -170,7 +170,7 @@ _send(lua_State *L) {
 		if (len == 0) {
 			msg = NULL;
 		}
-		printf("dest_string = %s", dest_string ? dest_string: "is null");
+		//printf("dest_string = %s", dest_string ? dest_string: "is null");
 		if (dest_string) {
 			session = skynet_sendname(context, 0, dest_string, type, session , msg, len);
 		} else {
@@ -181,7 +181,7 @@ _send(lua_State *L) {
 	case LUA_TLIGHTUSERDATA: {
 		void * msg = lua_touserdata(L,4);
 		int size = luaL_checkinteger(L,5);
-		printf("dest_string = %s", dest_string ? dest_string: "is null");
+		//printf("dest_string = %s", dest_string ? dest_string: "is null");
 		if (dest_string) {
 			session = skynet_sendname(context, 0, dest_string, type | PTYPE_TAG_DONTCOPY, session, msg, size);
 		} else {
@@ -196,7 +196,7 @@ _send(lua_State *L) {
 		// send to invalid address
 		// todo: maybe throw error whould be better
 		//luaL_error(L, "skynet.session < 0 |%d", session);
-		printf("error skynet.session < 0 |%d", session);
+		//printf("error skynet.session < 0 |%d", session);
 		return 0;
 	}
 	//printf("send success~~~");

@@ -31,7 +31,7 @@ function REQUEST:create_role()
 end
 
 function REQUEST:load_role()
-	logger.Info("test log ~~~~~~~~~~~~~~~~~~")
+	skynet.error("test log ~~~~~~~~~~~~~~~~~~")
 	if role_info.name == nil then
 		return {result = 1, roleinfo = {}}
 	end

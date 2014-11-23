@@ -126,8 +126,8 @@ $(LUA_CLIB_PATH)/lpeg.so : 3rd/lpeg/lpcap.c 3rd/lpeg/lpcode.c 3rd/lpeg/lpprint.c
 $(LUA_CLIB_PATH)/mysqlaux.so : lualib-src/lua_mysqlaux.c | $(LUA_CLIB_PATH)
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
 
-$(LUA_CLIB_PATH)/logger.so : skynet-src/skynet_logger.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@ -Iskynet-src
+#$(LUA_CLIB_PATH)/logger.so : skynet-src/skynet_logger.c
+#	$(CC) $(CFLAGS) $(SHARED) $^ -o $@ -Iskynet-src
 clean :
 	rm -f $(SKYNET_BUILD_PATH)/skynet $(CSERVICE_PATH)/*.so $(LUA_CLIB_PATH)/*.so
 

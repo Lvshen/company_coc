@@ -68,7 +68,9 @@ end
 
 local function launch_service(service, ...)
 	local param = table.concat({...}, " ")
+	--print("launch_service~~~~~~~~~~~~~~", param)
 	local inst = skynet.launch(service, param)
+	--print("launch_service~~~~~~~inst~~~~~~~", inst)
 	local response = skynet.response()
 	if inst then
 		services[inst] = service .. " " .. param

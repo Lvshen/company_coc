@@ -1,4 +1,5 @@
 local skynet = require "skynet"
+local cluster = require "cluster"
 
 local log_level_desc = {
     [0]     = "NOLOG",
@@ -43,4 +44,5 @@ skynet.start(function()
 		log(...)
 	end)
 	skynet.register ".lualog"
+	cluster.open "db"
 end)

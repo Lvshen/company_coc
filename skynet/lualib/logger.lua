@@ -1,4 +1,6 @@
 local Skynet =  require("skynet")
+local cluster = require "cluster"
+
 local assert = assert
 local error  = error
 local print = print
@@ -23,7 +25,9 @@ logger.FATAL = 60
 
 local function log_to_disk(...)
 	print("log_to_disk~~~~~~~~~~~~~~~~~~~~", ...)
-	print(Skynet.send(".lualog" , "lua" , ...))
+	--cluster.call("db", ".lualog", ...)
+	cluster.send("db", ".lualog", ...)
+	--print(Skynet.send(".lualog" , "lua" , ...))
 end
 
 local function dump_log_to_disk(t)

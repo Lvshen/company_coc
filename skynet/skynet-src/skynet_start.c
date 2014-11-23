@@ -222,13 +222,11 @@ skynet_start(struct skynet_config * config) {
 	skynet_module_init(config->module_path);
 	skynet_timer_init();
 	skynet_socket_init();
-
 	struct skynet_context *ctx = skynet_context_new("logger", config->logger);
 	if (ctx == NULL) {
 		fprintf(stderr, "Can't launch logger service\n");
 		exit(1);
 	}
-
 	bootstrap(ctx, config->bootstrap);
 
 	_start(config->thread);

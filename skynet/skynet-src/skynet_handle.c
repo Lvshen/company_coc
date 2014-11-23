@@ -145,16 +145,18 @@ skynet_handle_grab(uint32_t handle) {
 uint32_t 
 skynet_handle_findname(const char * name) {
 	struct handle_storage *s = H;
-
+	
 	rwlock_rlock(&s->lock);
 
 	uint32_t handle = 0;
 
 	int begin = 0;
 	int end = s->name_count - 1;
+	
 	while (begin<=end) {
 		int mid = (begin+end)/2;
 		struct handle_name *n = &s->name[mid];
+		//printf("\nskynet_handle_findname end = %d | %s | %s | %d",end, n->name, name, n->handle);
 		int c = strcmp(n->name, name);
 		if (c==0) {
 			handle = n->handle;

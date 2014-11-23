@@ -656,9 +656,9 @@ skynet_send(struct skynet_context * context, uint32_t source, uint32_t destinati
 	if (source == 0) {
 		source = context->handle;
 	}
-	printf("test in here3~~~~~~~~~~~ %d\n", session);
+	//printf("test in here3~~~~~~~~~~~ %d\n", session);
 	if (destination == 0) {
-		printf("test in here2~~~~~~~~~~~ %d\n", session);
+		//printf("test in here2~~~~~~~~~~~ %d\n", session);
 		return session;
 	}
 	if (skynet_harbor_message_isremote(destination)) {
@@ -676,7 +676,7 @@ skynet_send(struct skynet_context * context, uint32_t source, uint32_t destinati
 
 		if (skynet_context_push(destination, &smsg)) {
 			skynet_free(data);
-			printf("test in here~~~~~~~~~~~%d", destination);
+			//printf("test in here~~~~~~~~~~~%d", destination);
 			return -1;
 		}
 	}
@@ -688,7 +688,7 @@ skynet_sendname(struct skynet_context * context, uint32_t source, const char * a
 	if (source == 0) {
 		source = context->handle;
 	}
-	printf("addr ~~~~~~~~~~ = %s", addr);
+	//printf("addr ~~~~~~~~~~ = %s", addr);
 	uint32_t des = 0;
 	if (addr[0] == ':') {
 		des = strtoul(addr+1, NULL, 16);
