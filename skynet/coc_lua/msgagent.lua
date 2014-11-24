@@ -31,7 +31,6 @@ function REQUEST:create_role()
 end
 
 function REQUEST:load_role()
-	skynet.error("test log ~~~~~~~~~~~~~~~~~~")
 	if role_info.name == nil then
 		return {result = 1, roleinfo = {}}
 	end
@@ -44,9 +43,8 @@ function REQUEST:heartbeat()
 end
 
 function REQUEST:build_action()
-	logger.Info("test log ~~~~~~~~~~~~~~~~~~")
+	--logger.Info("test log ~~~~~~~~~~~~~~~~~~")
 	local result, index, changeinfo, value = buildoperate.build_operate(self, role_info)
-	print("build_action response ~~", result, index, changeinfo, value )
 	if result == 0 then
 		UpdateRoleInfo(changeinfo)	
 	end
@@ -54,10 +52,15 @@ function REQUEST:build_action()
 end
 
 local function request(name, args, response)
-	print("-------------requies["..name.."]", uuid, args)
+	if args ~=nil then
+		skynet.error(string.format("REQUEST : %s %s", name, skynet.print_r(args)))
+	else
+		skynet.error(string.format("REQUEST : %s %s", name, "{}"))
+	end
 	local f = assert(REQUEST[name])
 	local r = f(args)
 	if response then
+		skynet.error(string.format("RESPONSE : %s", skynet.print_r(r)))
 		return response(r)
 	end
 end

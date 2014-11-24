@@ -763,7 +763,8 @@ function skynet.print_r(root)
 		end
 		return tconcat(temp,"\n"..space)
 	end
-	print(_dump(root, "",""))
+	--print(_dump(root, "",""))
+	return _dump(root, "","")
 end
 
 local function clear_pool()
