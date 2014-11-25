@@ -5,10 +5,11 @@
 #include <stdint.h>
 #include <time.h>
 #include <sys/time.h>
+#include <string.h>
 
 struct logger {
 	FILE * handle;
-	char * fileName;
+	char fileName[256];
 	int close;
 	int uLogFileName;
 };
@@ -19,7 +20,7 @@ logger_create(void) {
 	inst->handle = NULL;
 	inst->close = 0;
 	inst->uLogFileName = 0;
-	inst->fileName = NULL;
+	memset(inst->fileName, 0 , sizeof(inst->fileName));
 	return inst;
 }
 
@@ -41,7 +42,7 @@ _logger(struct skynet_context * context, void *ud, int type, int session, uint32
 	sprintf(chTime, "%04d%02d%02d%02d", t_tm->tm_year+1900, t_tm->tm_mon+1, t_tm->tm_mday, t_tm->tm_hour);
 	int uLogFileName = atoi(chTime);
 	struct logger * inst = ud;
-	if (inst->fileName != NULL && inst->uLogFileName != uLogFileName)
+	if (inst->uLogFileName != uLogFileName)
 	{
 		char path[256];
 		inst->uLogFileName = atoi(chTime);
@@ -78,7 +79,7 @@ logger_init(struct logger * inst, struct skynet_context *ctx, const char * parm)
 		sprintf(chTime, "%04d%02d%02d%02d", t_tm->tm_year+1900, t_tm->tm_mon+1, t_tm->tm_mday, t_tm->tm_hour);
 		inst->uLogFileName = atoi(chTime);
 		sprintf(path, "%s_%d.log", parm, inst->uLogFileName);
-		inst->fileName = path;
+		strcpy(inst->fileName, parm);
 		inst->handle = fopen(path,"a");
 		//printf("file name is %s", inst->fileName);
 		//end
