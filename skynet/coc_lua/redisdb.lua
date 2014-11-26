@@ -75,7 +75,14 @@ function command.InitUserRole(id, name)
 			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 , collect_time = now},
 		 	{ id = 105, level = 1, index = 3,  x = 45, y = 30, finish = 1 },
 	        	{ id = 108, level = 1, index = 4,  x = 55, y = 35, finish = 1 },
-	        }
+	        },
+	        --[[
+	        armys = {
+			{ index = 7, id = 109, sum_count = 5, { id = 1001, level = 1, count = 5 } },
+			...,
+	        },
+	        armyslv = {[1001] = 1, [10002] = 1, ...}
+	        ]]
 	}
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)

@@ -32,37 +32,6 @@
 
 local skynet = require "skynet"
 
-
-local print = print
-local tconcat = table.concat
-local tinsert = table.insert
-local srep = string.rep
-local type = type
-local pairs = pairs
-local tostring = tostring
-local next = next
-
-local function print_r(root)
-	local cache = {  [root] = "." }
-	local function _dump(t,space,name)
-		local temp = {}
-		for k,v in pairs(t) do
-			local key = tostring(k)
-			if cache[v] then
-				tinsert(temp,"+" .. key .. " {" .. cache[v].."}")
-			elseif type(v) == "table" then
-				local new_key = name .. "." .. key
-				cache[v] = new_key
-				tinsert(temp,"+" .. key .. _dump(v,space .. (next(t,k) and "|" or " " ).. srep(" ",#key),new_key))
-			else
-				tinsert(temp,"+" .. key .. " [" .. tostring(v).."]")
-			end
-		end
-		return tconcat(temp,"\n"..space)
-	end
-	print(_dump(root, "",""))
-end
-
 local build_config = {
 	[100] = {
 		[1] = {blood = 80, build_money = 0, build_money_type = 0, max_gold = 1500, max_water = 1500, build_time = 60},
@@ -87,7 +56,10 @@ local build_config = {
 		[9] = {blood = 390, build_money = 56000, build_money_type = 1, max_value = 75000, produce_speed = 2200, build_time = 259200},
 		[10] = {blood = 420, build_money = 84000, build_money_type = 1, max_value = 100000, produce_speed = 2500, build_time = 345600},
 		[11] = {blood = 450, build_money = 168000, build_money_type = 1, max_value = 150000, produce_speed = 3000, build_time = 518400},
-	}
+	},
+	[109] = {
+		[1] = {blood = 250, build_money = 150, build_money_type = 1, space = 5, build_time = 60},
+	},
 }
 
 --大本营等级基础限制其他建筑最高等级 
@@ -116,6 +88,11 @@ local build_numlimit = {
 	[9] = { [103] = 6, [101] = 6, [107] = 2, [104] = 4, [102] = 4, [106] = 1, [108] = 4, [110] = 1, [111] = 1, [115] = 5, [116] = 5, [117] = 200, [118] = 3, [119] = 6, [120] = 2, [121] = 6, [122] = 3, [123] = 3, [124] = 3, [126] = 3, [125] = 4, [128] = 2 },
 }
 
+local army_config = {
+	[1001] = {
+		[1]= { boold = 140, space = 1, money = 20, time = 60, damage = 30 },
+	},
+}
 
 local function build_finish(build)
 	if build.finish == 0 then
@@ -355,6 +332,78 @@ local function move_build(action, role_info)
 	return 0, index, changeinfo
 end
 
+local function produce_armys(action, role_info)
+	local index = action.produce.index
+	local build_id = action.produce.build_id
+	local build = role_info.build[index]
+	if build == nil then
+		skynet.error(string.format("(role not this build) build id : %d is not exist!", build_id))
+		return 3
+	end
+	local build_lv = build.level
+	local config_build = build_config[build_id][build_lv]
+	if config_builod.space == nil then
+		skynet.error(string.format("(client request error) build id : %d is not valid army build!", build_id))
+		return 3
+	end
+	local army_id = action.produce.id
+	local count = action.produce.count
+	local config_army = army_config[army_id][]
+	if config_army == nil then
+		skynet.error(string.format("(clinet quest error)army id : %d is not exist!", army_id))
+		return -1
+	end
+	local role_armys = role_info.armys[index];
+	local need_space = count * config_army.space
+	if role_armys == nil then
+		if need_space > config_builod.space then
+			skynet.error(string.format("produce army id : %d need space(%d), but build space(%d) is not enough!", army_id, need_space, config_builod.space))
+			return 7
+		end
+	else
+		local role_armys_count = role_armys.sum_count
+		if need_space + role_armys_count > config_builod.space then
+			skynet.error(string.format("produce army id : %d need space(%d), but build space(%d) is not enough!", army_id, need_space, config_builod.space))
+			return 7
+		end
+	end
+
+	local have_money = tonumber(role_info.goldcoin)
+	if 
+	
+	local changeinfo = {}
+	changeinfo["armys"] = {}
+	local need_money = config.build_money
+	local money_type = config.build_money_type
+	local have_money = have_money or 0
+	if money_type == 0 and tonumber(role_info.goldcoin) >= need_money then
+		have_money = tonumber(role_info.goldcoin)
+		changeinfo["goldcoin"] = have_money - need_money
+	elseif money_type == 1 and tonumber(role_info.water) >= need_money then
+		have_money = tonumber(role_info.water)
+		changeinfo["water"] = have_money - need_money
+	elseif money_type == 2 and tonumber(role_info.gem) >= need_money then
+		have_money = tonumber(role_info.gem)
+		changeinfo["gem"] = have_money - need_money
+	else 
+		skynet.error(string.format(" build id : %d  money is not enough!(%d|%d|%d)", tonumber(build_id), money_type, need_monye, have_money))
+		return 2
+	end
+	local now = skynet.time()
+	build["build_time"] = now
+	build["remain_time"] = config.build_time
+	build["time_c_type"] = 1
+	if config.build_time == 0 then
+		build["finish"] = 1
+		build["level"] = build_lv + 1
+	else
+		build["finish"] = 0
+	end
+	table.insert(changeinfo.build, build)
+	return 0, index, changeinfo
+	
+end
+
 --[[
 local action = {
 	[0] = function(buildaction, roleinfo) upgrade_build (buildaction, roleinfo) end,
@@ -383,6 +432,8 @@ function buildoperate.build_operate(buildaction, roleinfo)
 		return collect_resource (buildaction, roleinfo)
 	elseif type == 3 then
 		return move_build (buildaction, roleinfo)
+	elseif type == 4 then
+		return 
 	else
 		skynet.error(string.format("(client request error) type : %d is not valid!", type))
 	end

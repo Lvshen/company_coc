@@ -17,6 +17,21 @@ proto.c2s = sprotoparser.parse [[
 	y 4 : integer
 }
 
+#军队
+.army {
+	id 0 : integer						#兵种id
+	level 1 : integer					#等级
+	count 2 : integer					#兵数量
+}
+
+.armys_info {
+	index 0 : integer					#建筑索引
+	id 1 : integer						#建筑id
+	sum_count 2 : integer				#总兵占用单位= 单兵种单位* 单兵种数量 + ...
+	armys 3 : *army
+}
+
+
 #角色信息
 .role_info {
 	name 0 : string 					#角色/村庄名字
@@ -30,6 +45,8 @@ proto.c2s = sprotoparser.parse [[
 	max_water 8 : integer				#最大可拥有圣水量
 	build_count 9 : integer				#建筑数目(即为建筑索引计数)
 	build 10 : *build_info				#建筑
+	armys 11 : *armys_info				#军队
+	#armyslv 12 : *army_lv				#各兵种等级{[1001] = 1,....}
 }
 
 heartbeat 0 {
@@ -58,7 +75,8 @@ load_role 2 {
 }
 
 #id(建筑id), index(建筑索引), x/y(建筑横纵坐标) 
-#result(返回结果0 成功, 1 系统服务器错误, 2金币或圣水不足, 3建筑不存在, 4 建筑达到上限5 等级达到上限, 6 建筑正在建造中)
+#result(返回结果-1请求错误0 成功, 1 系统服务器错误, 2金币或圣水不足, 3建筑不存在, 4 建筑达到上限5 等级达到上限, 6 建筑正在建造中
+#		7 造兵空间不足)
 .buildaction {
 	.upgrade_build {					#升级建筑
 		id 0 : integer					
@@ -79,11 +97,18 @@ load_role 2 {
 		x 2 : integer
 		y 3 : integer
 	}
-	type 0 : integer					#0 升级建筑1 建造建筑 2 收集建筑3 移动建筑
+	.produce_armys {
+		id 0 : integer
+		count 1 : integer
+		build_id 2 : integer
+		index 3 : integer
+	}
+	type 0 : integer					#0 升级建筑1 建造建筑 2 收集建筑3 移动建筑4 造兵
 	upgrade 1 : upgrade_build
 	place 2 : place_build
 	collect 3 : collect_resource
 	move 4 : move_build
+	produce 5 : produce_armys
 }
 
 #请求与返回要求字段数目都非固定的
