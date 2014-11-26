@@ -50,7 +50,7 @@ proto.c2s = sprotoparser.parse [[
 	build_count 9 : integer				#建筑数目(即为建筑索引计数)
 	build 10 : *build_info				#建筑
 	armys 11 : *armys_info				#军队
-	#armyslv 12 : *army_lv				#各兵种等级{[1001] = 1,....}
+	#armyslv 12 : *army_lv			#各兵种等级
 }
 
 heartbeat 0 {
