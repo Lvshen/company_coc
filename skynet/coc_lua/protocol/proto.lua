@@ -31,6 +31,10 @@ proto.c2s = sprotoparser.parse [[
 	armys 3 : *army
 }
 
+.army_lv {
+	id 0 : integer
+	level 1 : integer
+}
 
 #╫ги╚пео╒
 .role_info {

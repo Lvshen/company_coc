@@ -81,7 +81,11 @@ function command.InitUserRole(id, name)
 			{ index = 7, id = 109, sum_count = 5, { id = 1001, level = 1, count = 5 } },
 			...,
 	        },
-	        armyslv = {[1001] = 1, [10002] = 1, ...}
+	        armyslv = {
+	        	[1001] = { id = 1001, level = 1 }, 
+	        	[1002] = { id = 1002, level = 1 },
+	        	[1003] = { id = 1003, level = 1 },
+	        }
 	        ]]
 	}
 	local data_key = string.format("role:[%d]:data", id)

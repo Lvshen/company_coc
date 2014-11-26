@@ -348,10 +348,15 @@ local function produce_armys(action, role_info)
 	end
 	local army_id = action.produce.id
 	local count = action.produce.count
-	local config_army = army_config[army_id][]
-	if config_army == nil then
-		skynet.error(string.format("(clinet quest error)army id : %d is not exist!", army_id))
+	local army_lv = role_info.armyslv[army_id].level
+	if army_lv == nil then
+		skynet.error(string.format("(client request error) army id : %d is not valid army !", army_id))
 		return -1
+	end
+	local config_army = army_config[army_id][army_lv]
+	if config_army == nil then
+		skynet.error(string.format("army id : %d level(%d) is error!", army_id, army_lv))
+		return 1
 	end
 	local role_armys = role_info.armys[index];
 	local need_space = count * config_army.space
@@ -367,9 +372,14 @@ local function produce_armys(action, role_info)
 			return 7
 		end
 	end
-
 	local have_money = tonumber(role_info.goldcoin)
-	if 
+	local need_money = config_army.money * count
+	if have_money < need_money then
+		skynet.error(string.format(" build id : %d  money is not enough!(%d|%d|%d)", tonumber(build_id), money_type, need_monye, have_money))
+		return 2
+	end
+
+
 	
 	local changeinfo = {}
 	changeinfo["armys"] = {}
