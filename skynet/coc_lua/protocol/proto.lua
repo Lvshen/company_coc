@@ -15,6 +15,9 @@ proto.c2s = sprotoparser.parse [[
 	index 2 : integer					#建筑索引
 	x 3 : integer						#建筑坐标
 	y 4 : integer
+	finish 5 : integer					#建筑、造兵完成标志0未完成 1完成
+	remain_time 6 : integer				#finish=0时建造或升级、造兵剩余时间
+	time_c_type 7 : integer				#finish=0时判断处于什么状态0建造 1升级 2造兵
 }
 
 #军队
@@ -24,10 +27,10 @@ proto.c2s = sprotoparser.parse [[
 	count 2 : integer					#兵数量
 }
 
-.armys_info {
+.army_info {
 	index 0 : integer					#建筑索引
 	id 1 : integer						#建筑id
-	sum_count 2 : integer				#总兵占用单位= 单兵种单位* 单兵种数量 + ...
+	sum_count 2 : integer				# (可选)总兵占用单位= 单兵种单位* 单兵种数量 + ...
 	armys 3 : *army
 }
 
@@ -49,8 +52,8 @@ proto.c2s = sprotoparser.parse [[
 	max_water 8 : integer				#最大可拥有圣水量
 	build_count 9 : integer				#建筑数目(即为建筑索引计数)
 	build 10 : *build_info				#建筑
-	armys 11 : *armys_info				#军队
-	#armyslv 12 : *army_lv			#各兵种等级
+	armys_info 11 : *armys_info				#军队
+	armys_lv 12 : *army_lv			       #各兵种等级
 }
 
 heartbeat 0 {
@@ -65,7 +68,7 @@ create_role 1 {
 		name 0 : string 				#角色/村庄名字
 	}
 	response {
-		result 0 : integer				# 0 成功1 创建过
+		result 0 : integer				# 0 成功 1 创建过
 		roleinfo 1 : role_info
 	}
 }
@@ -73,13 +76,13 @@ create_role 1 {
 #加载角色信息
 load_role 2 {
 	response {
-		result 0 : integer    			#0 成功1 新角色资料空
+		result 0 : integer    			#0 成功 1 新角色资料空
 		roleinfo 1 : role_info
 	}
 }
 
 #id(建筑id), index(建筑索引), x/y(建筑横纵坐标) 
-#result(返回结果-1请求错误0 成功, 1 系统服务器错误, 2金币或圣水不足, 3建筑不存在, 4 建筑达到上限5 等级达到上限, 6 建筑正在建造中
+#result(返回结果-1请求错误 0 成功, 1 系统服务器错误, 2金币或圣水不足, 3建筑不存在, 4 建筑达到上限5 等级达到上限, 6 建筑正在建造中
 #		7 造兵空间不足)
 .buildaction {
 	.upgrade_build {					#升级建筑

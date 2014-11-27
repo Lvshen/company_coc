@@ -340,6 +340,10 @@ local function produce_armys(action, role_info)
 		skynet.error(string.format("(role not this build) build id : %d is not exist!", build_id))
 		return 3
 	end
+	if build_finish(build) == false then
+		skynet.error(string.format("build id : %d at building not finish!", tonumber(build_id)))
+		return 6
+	end	
 	local build_lv = build.level
 	local config_build = build_config[build_id][build_lv]
 	if config_builod.space == nil then
@@ -378,37 +382,14 @@ local function produce_armys(action, role_info)
 		skynet.error(string.format(" build id : %d  money is not enough!(%d|%d|%d)", tonumber(build_id), money_type, need_monye, have_money))
 		return 2
 	end
-
-
-	
 	local changeinfo = {}
-	changeinfo["armys"] = {}
-	local need_money = config.build_money
-	local money_type = config.build_money_type
-	local have_money = have_money or 0
-	if money_type == 0 and tonumber(role_info.goldcoin) >= need_money then
-		have_money = tonumber(role_info.goldcoin)
-		changeinfo["goldcoin"] = have_money - need_money
-	elseif money_type == 1 and tonumber(role_info.water) >= need_money then
-		have_money = tonumber(role_info.water)
-		changeinfo["water"] = have_money - need_money
-	elseif money_type == 2 and tonumber(role_info.gem) >= need_money then
-		have_money = tonumber(role_info.gem)
-		changeinfo["gem"] = have_money - need_money
-	else 
-		skynet.error(string.format(" build id : %d  money is not enough!(%d|%d|%d)", tonumber(build_id), money_type, need_monye, have_money))
-		return 2
-	end
+	changeinfo["build"] = {}
+	changeinfo["goldcoin"] = have_money - need_money
 	local now = skynet.time()
 	build["build_time"] = now
-	build["remain_time"] = config.build_time
-	build["time_c_type"] = 1
-	if config.build_time == 0 then
-		build["finish"] = 1
-		build["level"] = build_lv + 1
-	else
-		build["finish"] = 0
-	end
+	build["remain_time"] = config_army.time * count
+	build["time_c_type"] = 2
+	build["finish"] = 0
 	table.insert(changeinfo.build, build)
 	return 0, index, changeinfo
 	
