@@ -332,6 +332,19 @@ local function move_build(action, role_info)
 	return 0, index, changeinfo
 end
 
+local function update_armys(armys, army)
+	if armys == nil then
+		table.insert(armys, )
+	else
+		if armys[army_id] == nil then
+			local t = {}
+			t[]
+		else
+			
+		end
+	end
+end
+
 local function produce_armys(action, role_info)
 	local index = action.produce.index
 	local build_id = action.produce.build_id
@@ -352,7 +365,7 @@ local function produce_armys(action, role_info)
 	end
 	local army_id = action.produce.id
 	local count = action.produce.count
-	local army_lv = role_info.armyslv[army_id].level
+	local army_lv = role_info.armys_lv[army_id].level
 	if army_lv == nil then
 		skynet.error(string.format("(client request error) army id : %d is not valid army !", army_id))
 		return -1
@@ -383,13 +396,20 @@ local function produce_armys(action, role_info)
 		return 2
 	end
 	local changeinfo = {}
-	changeinfo["build"] = {}
+	changeinfo["armys"] = role_info.armys
 	changeinfo["goldcoin"] = have_money - need_money
 	local now = skynet.time()
-	build["build_time"] = now
-	build["remain_time"] = config_army.time * count
-	build["time_c_type"] = 2
-	build["finish"] = 0
+	local needtime = config_army.time * count
+	local army = {}
+	army["id"] = army_id
+	army["count"] = count
+	army[remain_time] = needtime
+	army["finish"] = 0
+	if changeinfo.armys == nil then
+		changinfo.armys = {}
+		local temp = changinfo.armys
+		
+	end
 	table.insert(changeinfo.build, build)
 	return 0, index, changeinfo
 	

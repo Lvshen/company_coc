@@ -16,15 +16,16 @@ proto.c2s = sprotoparser.parse [[
 	x 3 : integer						#建筑坐标
 	y 4 : integer
 	finish 5 : integer					#建筑、造兵完成标志0未完成 1完成
-	remain_time 6 : integer				#finish=0时建造或升级、造兵剩余时间
-	time_c_type 7 : integer				#finish=0时判断处于什么状态0建造 1升级 2造兵
+	remain_time 6 : integer				#finish=0时建造或升级剩余时间
+	time_c_type 7 : integer				#finish=0时判断处于什么状态0建造 1升级 
 }
 
 #军队
 .army {
 	id 0 : integer						#兵种id
-	level 1 : integer					#等级
-	count 2 : integer					#兵数量
+	count 1 : integer					#兵数量
+	finish 2 : integer					#0未完成 1完成
+	remain_time 3 : integer				#finish=0 时剩余时间
 }
 
 .army_info {
@@ -52,7 +53,7 @@ proto.c2s = sprotoparser.parse [[
 	max_water 8 : integer				#最大可拥有圣水量
 	build_count 9 : integer				#建筑数目(即为建筑索引计数)
 	build 10 : *build_info				#建筑
-	armys_info 11 : *armys_info				#军队
+	armys_info 11 : *army_info			#军队
 	armys_lv 12 : *army_lv			       #各兵种等级
 }
 

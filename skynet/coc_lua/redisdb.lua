@@ -84,6 +84,7 @@ function command.InitUserRole(id, name)
 	        	[1005] = { id = 1003, level = 1 },
 	        	[1006] = { id = 1003, level = 1 },
 	        }
+	        armys = {id = 109, index = 9, {id = 1001, count = 5,  remain_time, finish}}
 	        --[[
 	        armys = {
 			{ index = 7, id = 109, sum_count = 5, { id = 1001, level = 1, count = 5 } },
