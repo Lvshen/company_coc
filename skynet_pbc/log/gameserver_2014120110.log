@@ -1,0 +1,39 @@
+[2014-12-01 10:23:20.425727  :00000001] LAUNCH logger ./log/gameserver
+[2014-12-01 10:23:20.437593  :00000002] LAUNCH snlua bootstrap
+[2014-12-01 10:23:20.437608  :00000003] LAUNCH snlua launcher
+[2014-12-01 10:23:20.437611  :00000004] LAUNCH snlua cdummy
+[2014-12-01 10:23:20.437614  :00000005] LAUNCH harbor 0 4
+[2014-12-01 10:23:20.437617  :00000006] LAUNCH snlua datacenterd
+[2014-12-01 10:23:20.437620  :00000007] LAUNCH snlua service_mgr
+[2014-12-01 10:23:20.437622  :00000008] LAUNCH snlua main
+[2014-12-01 10:23:20.437625  :00000009] LAUNCH snlua redisdb
+[2014-12-01 10:23:20.437628  :00000009] lua loader error : lualib/loader.lua:24: cannot open ./service/redisdb.lua: No such file or directory
+./coc_lua/redisdb.lua:87: '}' expected (to close '{' at line 71) near 'armys'
+cannot open ./coc_lua/protocol/redisdb.lua: No such file or directory
+stack traceback:
+	[C]: in function 'error'
+	lualib/loader.lua:24: in main chunk
+[2014-12-01 10:23:20.437631  :00000009] KILL self
+[2014-12-01 10:23:20.437633  :00000008] init service failed: ./lualib/skynet.lua:407: stack traceback:
+	./lualib/skynet.lua:407: in function 'yield_call'
+	./lualib/skynet.lua:417: in function <./lualib/skynet.lua:411>
+	(...tail calls...)
+	./coc_lua/main.lua:9: in function 'start'
+	./lualib/skynet.lua:631: in function <./lualib/skynet.lua:628>
+	[C]: in function 'xpcall'
+	./lualib/skynet.lua:636: in function 'init_service'
+	./lualib/skynet.lua:649: in function 'f'
+	./lualib/skynet.lua:109: in function <./lualib/skynet.lua:108>
+stack traceback:
+	[C]: in function 'assert'
+	./lualib/skynet.lua:407: in function 'yield_call'
+	./lualib/skynet.lua:417: in function <./lualib/skynet.lua:411>
+	(...tail calls...)
+	./coc_lua/main.lua:9: in function 'start'
+	./lualib/skynet.lua:631: in function <./lualib/skynet.lua:628>
+	[C]: in function 'xpcall'
+	./lualib/skynet.lua:636: in function 'init_service'
+	./lualib/skynet.lua:649: in function 'f'
+	./lualib/skynet.lua:109: in function <./lualib/skynet.lua:108>
+[2014-12-01 10:23:20.437636  :00000008] KILL self
+[2014-12-01 10:23:20.437639  :00000002] KILL self

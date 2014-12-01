@@ -1,0 +1,142 @@
+package.path = "./coc_lua/protocol/?.lua;./coc_lua/build/?.lua;" .. package.path
+
+local skynet = require "skynet"
+local socket = require "socket"
+local sproto = require "sproto"
+local proto = require "proto"
+local buildoperate = require "buildoperate"
+local logger = require "log"
+
+local p = require "p.core"
+
+local protobuf = require "protobuf"
+
+addr = io.open("./coc_lua/protocol/testpbc.pb","rb")
+buffer = addr:read "*a"
+addr:close()
+protobuf.register(buffer)
+
+local client_fd
+local heartbeat_time
+
+local uuid
+local role_info
+
+
+skynet.register_protocol {
+	name = "client",
+	id = skynet.PTYPE_CLIENT,
+	unpack = function (msg, sz)	
+		return skynet.tostring(msg, sz)
+	end,
+	dispatch = function (session, address, text)
+		data = p.unpack(text)
+		print("receive ok",data.v,data.p, data.msg)
+		local t = protobuf.decode("testpbc.create_role_req", data.msg)
+	end
+}
+
+--update role_info
+function UpdateRoleInfo(changed_info)
+	--example : changed_info = {level = 1, ..., build = {{ id = 100, level = 1, index = 1,  x = 35, y = 20 },{...},...}}
+	for k, v in pairs(changed_info) do
+		if type(v) == "table" then
+			if k == "build" then
+				local t = role_info.build
+				for _k, _v in pairs(v) do
+					local index = _v.index
+					t["index"] = _v
+				end
+			end
+		else
+			role_info[k] = v
+		end
+	end
+	skynet.call("REDISDB", "lua", "UpdateRoleInfo", uuid, changed_info)
+end
+
+local gate
+local userid, subid
+
+local CMD = {}
+
+local function send_package(fd, pack)
+	local size = #pack
+	local package = string.char(bit32.extract(size,8,8)) ..
+		string.char(bit32.extract(size,0,8))..
+		pack
+
+	socket.write(fd, package)
+end
+
+local action = {
+	["goldcoin"] = function(value) 
+		role_info["goldcoin"] = role_info["goldcoin"] + value
+	end,
+}
+
+function CMD.update(key, value)
+	action[key] (value)
+end
+
+function CMD.login(source, uid, sid, secret, id)
+	-- you may use secret to make a encrypted data stream
+	skynet.error(string.format("%s is login", uid))
+	gate = source
+	userid = uid
+	subid = sid
+	uuid = id
+	-- you may load user data from database
+	role_info = skynet.call("REDISDB", "lua", "LoadRoleAllInfo", uuid)
+end
+
+local function logout()
+	print("enter logout", gate, userid, subid)
+	if gate then
+		skynet.call(gate, "lua", "logout", userid, subid)
+	end
+	skynet.exit()
+end
+
+function CMD.logout(source)
+	print("enter logout 1", gate, userid, subid)
+	-- NOTICE: The logout MAY be reentry
+	skynet.error(string.format("%s is logout", userid))
+	logout()
+end
+
+function CMD.afk(source)
+	-- the connection is broken, but the user may back
+	skynet.error(string.format("AFK"))
+end
+
+function CMD.heartbeat(source, fd)
+	heartbeat_time = skynet.time()
+	print("fd = ", fd, heartbeat_time)
+	skynet.fork(function()
+	while true do
+		if (skynet.time() - heartbeat_time) > 60 then
+			logout()
+			break
+		end
+		skynet.sleep(500)
+	end
+	end)
+end
+
+skynet.start(function()
+	-- If you want to fork a work thread , you MUST do it in CMD.login
+	skynet.dispatch("lua", function(session, source, command, ...)
+		print("msgagent cmd=", command)
+		local f = assert(CMD[command])
+		skynet.ret(skynet.pack(f(source, ...)))
+	end)
+--[[
+	skynet.dispatch("client", function(_,_, msg)
+		print("msgagent msg=", msg)
+		-- the simple ehco service
+		skynet.sleep(10)	-- sleep a while
+		skynet.ret(msg)
+	end)
+]]
+end)

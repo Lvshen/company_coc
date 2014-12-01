@@ -1,0 +1,251 @@
+[2014-11-24 11:27:03  :00000001] LAUNCH logger ./log/gameserver
+[2014-11-24 11:27:03  :00000002] LAUNCH snlua bootstrap
+[2014-11-24 11:27:03  :00000003] LAUNCH snlua launcher
+[2014-11-24 11:27:03  :00000004] LAUNCH snlua cdummy
+[2014-11-24 11:27:03  :00000005] LAUNCH harbor 0 4
+[2014-11-24 11:27:03  :00000006] LAUNCH snlua datacenterd
+[2014-11-24 11:27:03  :00000007] LAUNCH snlua service_mgr
+[2014-11-24 11:27:03  :00000008] LAUNCH snlua main
+[2014-11-24 11:27:03  :00000009] LAUNCH snlua redisdb
+[2014-11-24 11:27:03  :0000000a] LAUNCH snlua logind
+[2014-11-24 11:27:03  :0000000b] LAUNCH snlua logind
+[2014-11-24 11:27:03  :0000000c] LAUNCH snlua logind
+[2014-11-24 11:27:03  :0000000d] LAUNCH snlua logind
+[2014-11-24 11:27:03  :0000000e] LAUNCH snlua logind
+[2014-11-24 11:27:03  :0000000f] LAUNCH snlua logind
+[2014-11-24 11:27:03  :00000010] LAUNCH snlua logind
+[2014-11-24 11:27:03  :00000011] LAUNCH snlua logind
+[2014-11-24 11:27:03  :00000012] LAUNCH snlua logind
+[2014-11-24 11:27:03  :0000000a] login server listen at : 127.0.0.1 8001
+[2014-11-24 11:27:03  :00000013] LAUNCH snlua gated 10
+[2014-11-24 11:27:03  :00000013] Listen on 0.0.0.0:8888
+[2014-11-24 11:27:03  :00000008] KILL self
+[2014-11-24 11:27:03  :00000002] KILL self
+[2014-11-24 11:36:03.199989  :00000001] LAUNCH logger ./log/gameserver
+[2014-11-24 11:36:03.209218  :00000002] LAUNCH snlua bootstrap
+[2014-11-24 11:36:03.211261  :00000003] LAUNCH snlua launcher
+[2014-11-24 11:36:03.211315  :00000004] LAUNCH snlua cdummy
+[2014-11-24 11:36:03.211716  :00000005] LAUNCH harbor 0 4
+[2014-11-24 11:36:03.212510  :00000006] LAUNCH snlua datacenterd
+[2014-11-24 11:36:03.213968  :00000007] LAUNCH snlua service_mgr
+[2014-11-24 11:36:03.215409  :00000008] LAUNCH snlua main
+[2014-11-24 11:36:03.216852  :00000009] LAUNCH snlua redisdb
+[2014-11-24 11:36:03.219346  :0000000a] LAUNCH snlua logind
+[2014-11-24 11:36:03.224583  :0000000b] LAUNCH snlua logind
+[2014-11-24 11:36:03.227162  :0000000c] LAUNCH snlua logind
+[2014-11-24 11:36:03.227984  :0000000d] LAUNCH snlua logind
+[2014-11-24 11:36:03.228422  :0000000e] LAUNCH snlua logind
+[2014-11-24 11:36:03.228921  :0000000f] LAUNCH snlua logind
+[2014-11-24 11:36:03.229383  :00000010] LAUNCH snlua logind
+[2014-11-24 11:36:03.229748  :00000011] LAUNCH snlua logind
+[2014-11-24 11:36:03.230533  :00000012] LAUNCH snlua logind
+[2014-11-24 11:36:03.230648  :0000000a] login server listen at : 127.0.0.1 8001
+[2014-11-24 11:36:03.232140  :00000013] LAUNCH snlua gated 10
+[2014-11-24 11:36:03.232267  :00000013] Listen on 0.0.0.0:8888
+[2014-11-24 11:36:03.232555  :00000008] KILL self
+[2014-11-24 11:36:03.232704  :00000002] KILL self
+[2014-11-24 11:37:37.875309  :0000000b] connect from 127.0.0.1:42982 (fd = 4)
+[2014-11-24 11:37:37.917379  :0000000a] invalid client (fd = 4) error = ./lualib/snax/loginserver.lua:112: ./coc_lua/logind.lua:56: user Auth failed r = 1
+[2014-11-24 11:44:44.467899  :00000001] LAUNCH logger ./log/gameserver
+[2014-11-24 11:44:44.478065  :00000002] LAUNCH snlua bootstrap
+[2014-11-24 11:44:44.480603  :00000003] LAUNCH snlua launcher
+[2014-11-24 11:44:44.480664  :00000004] LAUNCH snlua cdummy
+[2014-11-24 11:44:44.480988  :00000005] LAUNCH harbor 0 4
+[2014-11-24 11:44:44.481822  :00000006] LAUNCH snlua datacenterd
+[2014-11-24 11:44:44.483547  :00000007] LAUNCH snlua service_mgr
+[2014-11-24 11:44:44.484799  :00000008] LAUNCH snlua main
+[2014-11-24 11:44:44.486233  :00000009] LAUNCH snlua redisdb
+[2014-11-24 11:44:44.491361  :0000000a] LAUNCH snlua logind
+[2014-11-24 11:44:44.491546  :0000000b] LAUNCH snlua logind
+[2014-11-24 11:44:44.495292  :0000000c] LAUNCH snlua logind
+[2014-11-24 11:44:44.496092  :0000000d] LAUNCH snlua logind
+[2014-11-24 11:44:44.496753  :0000000e] LAUNCH snlua logind
+[2014-11-24 11:44:44.497371  :0000000f] LAUNCH snlua logind
+[2014-11-24 11:44:44.498200  :00000010] LAUNCH snlua logind
+[2014-11-24 11:44:44.498861  :00000011] LAUNCH snlua logind
+[2014-11-24 11:44:44.499355  :00000012] LAUNCH snlua logind
+[2014-11-24 11:44:44.499542  :0000000a] login server listen at : 127.0.0.1 8001
+[2014-11-24 11:44:44.501478  :00000013] LAUNCH snlua gated 10
+[2014-11-24 11:44:44.501706  :00000013] Listen on 0.0.0.0:8888
+[2014-11-24 11:44:44.501909  :00000008] KILL self
+[2014-11-24 11:44:44.502090  :00000002] KILL self
+[2014-11-24 11:44:48.581470  :0000000b] connect from 127.0.0.1:42984 (fd = 4)
+[2014-11-24 11:44:48.622729  :0000000a] invalid client (fd = 4) error = ./lualib/snax/loginserver.lua:112: ./coc_lua/logind.lua:56: user Auth failed r = 1
+[2014-11-24 11:45:39.163963  :0000000c] connect from 127.0.0.1:42985 (fd = 5)
+[2014-11-24 11:45:39.246041  :00000014] LAUNCH snlua msgagent
+[2014-11-24 11:45:39.254788  :00000015] LAUNCH snlua clusterd
+[2014-11-24 11:45:39.277168  :00000015] init service failed: ./service/clusterd.lua:10: ./coc_lua/clustername.lua: No such file or directory
+stack traceback:
+	[C]: in function 'assert'
+	./service/clusterd.lua:10: in function 'loadconfig'
+	./service/clusterd.lua:106: in function 'start'
+	./lualib/skynet.lua:631: in function <./lualib/skynet.lua:628>
+	[C]: in function 'xpcall'
+	./lualib/skynet.lua:636: in function 'init_service'
+	./lualib/skynet.lua:649: in function 'f'
+	./lualib/skynet.lua:109: in function <./lualib/skynet.lua:108>
+[2014-11-24 11:45:39.277245  :00000015] KILL self
+[2014-11-24 11:45:39.277863  :00000014] init service failed: ./lualib/skynet.lua:548: ./service/service_mgr.lua:24: ./lualib/skynet.lua:407: stack traceback:
+	./lualib/skynet.lua:407: in function 'yield_call'
+	./lualib/skynet.lua:417: in function <./lualib/skynet.lua:411>
+	(...tail calls...)
+	[C]: in function 'pcall'
+	./service/service_mgr.lua:8: in function <./service/service_mgr.lua:7>
+	(...tail calls...)
+	[C]: in function 'pcall'
+	./service/service_mgr.lua:169: in function 'f'
+	./lualib/skynet.lua:114: in function <./lualib/skynet.lua:108>
+stack traceback:
+	[C]: in function 'assert'
+	./lualib/skynet.lua:548: in function 'uniqueservice'
+	./lualib/cluster.lua:32: in function 'v'
+	./lualib/skynet.lua:624: in function 'init_all'
+	./lualib/skynet.lua:629: in function <./lualib/skynet.lua:628>
+	[C]: in function 'xpcall'
+	./lualib/skynet.lua:636: in function 'init_service'
+	./lualib/skynet.lua:649: in function 'f'
+	./lualib/skynet.lua:109: in function <./lualib/skynet.lua:108>
+[2014-11-24 11:45:39.277973  :00000014] KILL self
+[2014-11-24 11:45:39.278096  :00000013] lua call [3 to :13 : 3 msgsz = 0] error : [31m./lualib/skynet.lua:537: ./lualib/skynet.lua:165: ./lualib/skynet.lua:407: stack traceback:
+	./lualib/skynet.lua:407: in function 'yield_call'
+	./lualib/skynet.lua:417: in function <./lualib/skynet.lua:411>
+	(...tail calls...)
+	./coc_lua/gated.lua:24: in function <./coc_lua/gated.lua:15>
+	(...tail calls...)
+	./lualib/snax/gateserver.lua:125: in function 'f'
+	./lualib/skynet.lua:114: in function <./lualib/skynet.lua:108>
+stack traceback:
+	[C]: in function 'assert'
+	./lualib/skynet.lua:407: in function 'yield_call'
+	./lualib/skynet.lua:417: in function <./lualib/skynet.lua:411>
+	(...tail calls...)
+	./coc_lua/gated.lua:24: in function <./coc_lua/gated.lua:15>
+	(...tail calls...)
+	./lualib/snax/gateserver.lua:125: in function 'f'
+	./lualib/skynet.lua:114: in function <./lualib/skynet.lua:108>
+stack traceback:
+	[C]: in function 'assert'
+	./lualib/skynet.lua:537: in function <./lualib/skynet.lua:519>[0m
+[2014-11-24 11:45:39.278137  :0000000a] invalid client (fd = 5) error = ./lualib/snax/loginserver.lua:133: ./lualib/skynet.lua:407: stack traceback:
+	./lualib/skynet.lua:407: in function 'yield_call'
+	./lualib/skynet.lua:417: in function 'call'
+	./coc_lua/logind.lua:76: in function <./coc_lua/logind.lua:65>
+	[C]: in function 'pcall'
+	./lualib/snax/loginserver.lua:124: in function <./lualib/snax/loginserver.lua:105>
+	[C]: in function 'pcall'
+	./lualib/snax/loginserver.lua:161: in function 'callback'
+	./lualib/socket.lua:104: in function '?'
+	./lualib/socket.lua:127: in function 'f'
+	./lualib/skynet.lua:114: in function <./lualib/skynet.lua:108>
+[2014-11-24 11:48:06.497394  :00000001] LAUNCH logger ./log/gameserver
+[2014-11-24 11:48:06.499592  :00000002] LAUNCH snlua bootstrap
+[2014-11-24 11:48:06.502493  :00000003] LAUNCH snlua launcher
+[2014-11-24 11:48:06.504225  :00000004] LAUNCH snlua cdummy
+[2014-11-24 11:48:06.504507  :00000005] LAUNCH harbor 0 4
+[2014-11-24 11:48:06.505365  :00000006] LAUNCH snlua datacenterd
+[2014-11-24 11:48:06.508021  :00000007] LAUNCH snlua service_mgr
+[2014-11-24 11:48:06.509286  :00000008] LAUNCH snlua main
+[2014-11-24 11:48:06.510673  :00000009] LAUNCH snlua redisdb
+[2014-11-24 11:48:06.516293  :0000000a] LAUNCH snlua logind
+[2014-11-24 11:48:06.516596  :0000000b] LAUNCH snlua logind
+[2014-11-24 11:48:06.518025  :0000000c] LAUNCH snlua logind
+[2014-11-24 11:48:06.519860  :0000000d] LAUNCH snlua logind
+[2014-11-24 11:48:06.520448  :0000000e] LAUNCH snlua logind
+[2014-11-24 11:48:06.521276  :0000000f] LAUNCH snlua logind
+[2014-11-24 11:48:06.522051  :00000010] LAUNCH snlua logind
+[2014-11-24 11:48:06.522841  :00000011] LAUNCH snlua logind
+[2014-11-24 11:48:06.523423  :00000012] LAUNCH snlua logind
+[2014-11-24 11:48:06.523731  :0000000a] login server listen at : 127.0.0.1 8001
+[2014-11-24 11:48:06.524607  :00000013] LAUNCH snlua gated 10
+[2014-11-24 11:48:06.525985  :00000013] Listen on 0.0.0.0:8888
+[2014-11-24 11:48:06.526178  :00000008] KILL self
+[2014-11-24 11:48:06.526508  :00000002] KILL self
+[2014-11-24 11:48:15.920830  :0000000b] connect from 127.0.0.1:42987 (fd = 4)
+[2014-11-24 11:48:15.961667  :0000000a] invalid client (fd = 4) error = ./lualib/snax/loginserver.lua:112: ./coc_lua/logind.lua:60: user register failed r = 1
+[2014-11-24 11:48:59.577847  :00000001] LAUNCH logger ./log/gameserver
+[2014-11-24 11:48:59.582120  :00000002] LAUNCH snlua bootstrap
+[2014-11-24 11:48:59.588427  :00000003] LAUNCH snlua launcher
+[2014-11-24 11:48:59.588615  :00000004] LAUNCH snlua cdummy
+[2014-11-24 11:48:59.592210  :00000005] LAUNCH harbor 0 4
+[2014-11-24 11:48:59.592283  :00000006] LAUNCH snlua datacenterd
+[2014-11-24 11:48:59.594977  :00000007] LAUNCH snlua service_mgr
+[2014-11-24 11:48:59.596369  :00000008] LAUNCH snlua main
+[2014-11-24 11:48:59.597711  :00000009] LAUNCH snlua redisdb
+[2014-11-24 11:48:59.604766  :0000000a] LAUNCH snlua logind
+[2014-11-24 11:48:59.606293  :0000000b] LAUNCH snlua logind
+[2014-11-24 11:48:59.607169  :0000000c] LAUNCH snlua logind
+[2014-11-24 11:48:59.607729  :0000000d] LAUNCH snlua logind
+[2014-11-24 11:48:59.609038  :0000000e] LAUNCH snlua logind
+[2014-11-24 11:48:59.609960  :0000000f] LAUNCH snlua logind
+[2014-11-24 11:48:59.610330  :00000010] LAUNCH snlua logind
+[2014-11-24 11:48:59.611818  :00000011] LAUNCH snlua logind
+[2014-11-24 11:48:59.612540  :00000012] LAUNCH snlua logind
+[2014-11-24 11:48:59.612953  :0000000a] login server listen at : 127.0.0.1 8001
+[2014-11-24 11:48:59.615803  :00000013] LAUNCH snlua gated 10
+[2014-11-24 11:48:59.618133  :00000013] Listen on 0.0.0.0:8888
+[2014-11-24 11:48:59.618426  :00000008] KILL self
+[2014-11-24 11:48:59.618712  :00000002] KILL self
+[2014-11-24 11:49:02.129686  :0000000b] connect from 127.0.0.1:42989 (fd = 4)
+[2014-11-24 11:49:02.171836  :00000014] LAUNCH snlua msgagent
+[2014-11-24 11:49:02.177650  :00000014] hello123@163.com is login
+[2014-11-24 11:49:02.181915  :00000014] ./lualib/skynet.lua:749: table index is nil
+[2014-11-24 11:50:07.171179  :00000014] KILL self
+[2014-11-24 11:50:58.502394  :00000001] LAUNCH logger ./log/gameserver
+[2014-11-24 11:50:58.504814  :00000002] LAUNCH snlua bootstrap
+[2014-11-24 11:50:58.512922  :00000003] LAUNCH snlua launcher
+[2014-11-24 11:50:58.513017  :00000004] LAUNCH snlua cdummy
+[2014-11-24 11:50:58.513998  :00000005] LAUNCH harbor 0 4
+[2014-11-24 11:50:58.514931  :00000006] LAUNCH snlua datacenterd
+[2014-11-24 11:50:58.516555  :00000007] LAUNCH snlua service_mgr
+[2014-11-24 11:50:58.518657  :00000008] LAUNCH snlua main
+[2014-11-24 11:50:58.519226  :00000009] LAUNCH snlua redisdb
+[2014-11-24 11:50:58.524726  :0000000a] LAUNCH snlua logind
+[2014-11-24 11:50:58.526825  :0000000b] LAUNCH snlua logind
+[2014-11-24 11:50:58.527567  :0000000c] LAUNCH snlua logind
+[2014-11-24 11:50:58.529829  :0000000d] LAUNCH snlua logind
+[2014-11-24 11:50:58.530500  :0000000e] LAUNCH snlua logind
+[2014-11-24 11:50:58.530751  :0000000f] LAUNCH snlua logind
+[2014-11-24 11:50:58.532444  :00000010] LAUNCH snlua logind
+[2014-11-24 11:50:58.533250  :00000011] LAUNCH snlua logind
+[2014-11-24 11:50:58.534233  :00000012] LAUNCH snlua logind
+[2014-11-24 11:50:58.534636  :0000000a] login server listen at : 127.0.0.1 8001
+[2014-11-24 11:50:58.536270  :00000013] LAUNCH snlua gated 10
+[2014-11-24 11:50:58.537791  :00000013] Listen on 0.0.0.0:8888
+[2014-11-24 11:50:58.538077  :00000008] KILL self
+[2014-11-24 11:50:58.538341  :00000002] KILL self
+[2014-11-24 11:51:01.245001  :0000000b] connect from 127.0.0.1:42992 (fd = 4)
+[2014-11-24 11:51:01.289724  :00000014] LAUNCH snlua msgagent
+[2014-11-24 11:51:01.304238  :00000014] hello123@163.com is login
+[2014-11-24 11:51:01.309997  :00000014] load_role : {}
+[2014-11-24 11:51:01.310044  :00000014] test log ~~~~~~~~~~~~~~~~~~
+[2014-11-24 11:52:06.302336  :00000014] KILL self
+[2014-11-24 11:54:44.655975  :00000001] LAUNCH logger ./log/gameserver
+[2014-11-24 11:54:44.661384  :00000002] LAUNCH snlua bootstrap
+[2014-11-24 11:54:44.665611  :00000003] LAUNCH snlua launcher
+[2014-11-24 11:54:44.665796  :00000004] LAUNCH snlua cdummy
+[2014-11-24 11:54:44.667679  :00000005] LAUNCH harbor 0 4
+[2014-11-24 11:54:44.669094  :00000006] LAUNCH snlua datacenterd
+[2014-11-24 11:54:44.669498  :00000007] LAUNCH snlua service_mgr
+[2014-11-24 11:54:44.672498  :00000008] LAUNCH snlua main
+[2014-11-24 11:54:44.675494  :00000009] LAUNCH snlua redisdb
+[2014-11-24 11:54:44.680614  :0000000a] LAUNCH snlua logind
+[2014-11-24 11:54:44.681100  :0000000b] LAUNCH snlua logind
+[2014-11-24 11:54:44.681459  :0000000c] LAUNCH snlua logind
+[2014-11-24 11:54:44.683634  :0000000d] LAUNCH snlua logind
+[2014-11-24 11:54:44.684078  :0000000e] LAUNCH snlua logind
+[2014-11-24 11:54:44.684454  :0000000f] LAUNCH snlua logind
+[2014-11-24 11:54:44.685124  :00000010] LAUNCH snlua logind
+[2014-11-24 11:54:44.685714  :00000011] LAUNCH snlua logind
+[2014-11-24 11:54:44.686154  :00000012] LAUNCH snlua logind
+[2014-11-24 11:54:44.686304  :0000000a] login server listen at : 127.0.0.1 8001
+[2014-11-24 11:54:44.687500  :00000013] LAUNCH snlua gated 10
+[2014-11-24 11:54:44.687889  :00000013] Listen on 0.0.0.0:8888
+[2014-11-24 11:54:44.688076  :00000008] KILL self
+[2014-11-24 11:54:44.688267  :00000002] KILL self
+[2014-11-24 11:54:47.767330  :0000000b] connect from 127.0.0.1:42995 (fd = 4)
+[2014-11-24 11:54:47.810601  :00000014] LAUNCH snlua msgagent
+[2014-11-24 11:54:47.818467  :00000014] hello123@163.com is login
+[2014-11-24 11:54:47.823058  :00000014] REQUEST : load_role {}
+[2014-11-24 11:54:47.823090  :00000014] RESPONSE : +result [1]
++roleinfo
+[2014-11-24 11:55:52.812172  :00000014] KILL self
