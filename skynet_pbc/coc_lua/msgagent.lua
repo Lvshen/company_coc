@@ -11,7 +11,7 @@ local p = require "p.core"
 
 local protobuf = require "protobuf"
 
-addr = io.open("./coc_lua/protocol/testpbc.pb","rb")
+addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
 addr:close()
 protobuf.register(buffer)
@@ -32,7 +32,7 @@ skynet.register_protocol {
 	dispatch = function (session, address, text)
 		data = p.unpack(text)
 		print("receive ok",data.v,data.p, data.msg)
-		local t = protobuf.decode("testpbc.create_role_req", data.msg)
+		local t = protobuf.decode("PROTOCOL.create_role_req", data.msg)
 	end
 }
 

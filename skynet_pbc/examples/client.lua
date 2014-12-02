@@ -9,7 +9,7 @@ local proto = require "proto"
 local protobuf = require "protobuf"
 local p = require "p.core"
 
-addr = io.open("./coc_lua/protocol/testpbc.pb","rb")
+addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
 addr:close()
 protobuf.register(buffer)
@@ -34,10 +34,11 @@ local function unpack_package(text)
 		return nil, text
 	end
 	local s = text:byte(1) * 256 + text:byte(2)
+	print("s~~~~~~~~~~", s, size)
 	if size < s+2 then
 		return nil, text
 	end
-
+	print(text:sub(3,2+s), text:sub(3+s))
 	return text:sub(3,2+s), text:sub(3+s)
 end
 
@@ -68,7 +69,8 @@ local function dispatch_package()
 		if not v then
 			break
 		end
-
+		
+		print("recv~~~~~~~~~~~~~~", v)
 		--print_package(host:dispatch(v))
 	end
 end
@@ -77,9 +79,9 @@ local create_role_req = {
 	name = "Alice"
 }
 
-local buffer = protobuf.encode("testpbc.create_role_req", create_role_req)
+local buffer = protobuf.encode("PROTOCOL.create_role_req", create_role_req)
 
-local t = protobuf.decode("testpbc.create_role_req", buffer)
+local t = protobuf.decode("PROTOCOL.create_role_req", buffer)
 print(t.name)
 for k,v in pairs(t) do
 	if type(k) == "string" then
@@ -87,8 +89,8 @@ for k,v in pairs(t) do
 	end
 end
 
---send_package(fd, p.pack(1,1002,buffer))
-send_package(fd, buffer)
+send_package(fd, p.pack(1,1002,buffer))
+--send_package(fd, buffer)
 
 while true do
 	dispatch_package()

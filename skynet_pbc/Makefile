@@ -41,7 +41,7 @@ jemalloc : $(MALLOC_STATICLIB)
 #pbc
 all : 
 	cd 3rd/pbc && $(MAKE)
-
+	cd 3rd/pbc/binding/lua && $(MAKE)
 # skynet
 
 CSERVICE = snlua logger gate harbor

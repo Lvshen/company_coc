@@ -7,7 +7,7 @@ local p = require "p.core"
 
 local protobuf = require "protobuf"
 
-addr = io.open("./coc_lua/protocol/testpbc.pb","rb")
+addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
 addr:close()
 protobuf.register(buffer)
@@ -16,15 +16,22 @@ local CMD = {}
 local client_fd
 
 local function send_package(pack)
---[[
+
 	local size = #pack
 	local package = string.char(bit32.extract(size,8,8)) ..
 		string.char(bit32.extract(size,0,8))..
 		pack
 
 	socket.write(client_fd, package)
-	]]
-	socket.write(client_fd, netpack.pack(pack))
+	--socket.write(client_fd, netpack.pack(pack))
+end
+
+local function pbc_test()
+	local create_role_req = {
+	name = "Alice"
+	}
+	local buffer = protobuf.encode("PROTOCOL.create_role_req", create_role_req)
+	send_package(buffer)
 end
 
 skynet.register_protocol {
@@ -37,8 +44,9 @@ skynet.register_protocol {
 		print("@@@@@@@@@", text)
 		data = p.unpack(text)
 		print("receive ok",data.v,data.p, data.msg)
-		local t = protobuf.decode("testpbc.create_role_req", data.msg)
-		print(t.name);
+		local t = protobuf.decode("PROTOCOL.create_role_req", data.msg)
+		print(t.name)
+		pbc_test()
 		--[[
 		local ok,result
 		if data.p == 1001 then

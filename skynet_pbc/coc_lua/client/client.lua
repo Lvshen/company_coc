@@ -8,7 +8,7 @@ local proto = require "proto"
 local protobuf = require "protobuf"
 local p = require "p.core"
 
-addr = io.open("./coc_lua/protocol/testpbc.pb","rb")
+addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
 addr:close()
 protobuf.register(buffer)
@@ -209,9 +209,9 @@ local create_role_req = {
 	name = "Alice"
 }
 
-local buffer = protobuf.encode("testpbc.create_role_req", create_role_req)
+local buffer = protobuf.encode("PROTOCOL.create_role_req", create_role_req)
 
-local t = protobuf.decode("testpbc.create_role_req", buffer)
+local t = protobuf.decode("PROTOCOL.create_role_req", buffer)
 print(t.name)
 for k,v in pairs(t) do
 	if type(k) == "string" then
