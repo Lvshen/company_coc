@@ -20,7 +20,7 @@ local client_fd
 local heartbeat_time
 
 local uuid
-local role_info
+local role_info = {}
 
 
 skynet.register_protocol {
@@ -35,6 +35,12 @@ skynet.register_protocol {
 		local t = protobuf.decode("PROTOCOL.create_role_req", data.msg)
 	end
 }
+
+
+local function LoadRoleInfo()
+	for k, v in pairs(role_info) 
+	end
+end
 
 --update role_info
 function UpdateRoleInfo(changed_info)

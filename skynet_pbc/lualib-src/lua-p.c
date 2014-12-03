@@ -64,7 +64,7 @@ static int _unpack(lua_State *L)
 	size_t size;
 	
 	uint8_t * buffer=malloc(6);
-	
+	memset(buffer, 0, 6);
 	data = luaL_checklstring(L, 1, &size);
 	
 	memcpy(buffer, data, 6);
@@ -72,7 +72,6 @@ static int _unpack(lua_State *L)
 	
 	v = buffer[0] << 8 | buffer[1];
 	p = (buffer[2] << 24) | (buffer[3] << 16) | (buffer[4] << 8) | buffer[5];
-
 	
 	// Convert(buffer[2], 2);printf("\n\n");
 	// Convert(buffer[3], 2);printf("\n\n");
@@ -113,9 +112,9 @@ static int _pack(lua_State *L)
 	}
 	
 	// printf("version:%u protocol:%u size:%zu msg:%s\r\n",v,p,size,msg);
-	
+
 	buffer = malloc(size+6);
-	
+	memset(buffer, 0, size+6);
 	buffer[0] = (v >> 8) & 0xff;
 	buffer[1] = v & 0xff;
 	
@@ -127,6 +126,8 @@ static int _pack(lua_State *L)
 	
 	memcpy(buffer+6, msg, size);
 	lua_pushlstring(L, (const char *)buffer, size+6);
+
+	
 	return 1;
 }
 

@@ -34,11 +34,11 @@ local function unpack_package(text)
 		return nil, text
 	end
 	local s = text:byte(1) * 256 + text:byte(2)
-	print("s~~~~~~~~~~", s, size)
+	--print("s~~~~~~~~~~", s, size)
 	if size < s+2 then
 		return nil, text
 	end
-	print(text:sub(3,2+s), text:sub(3+s))
+	--print(text:sub(3,2+s), text:sub(3+s))
 	return text:sub(3,2+s), text:sub(3+s)
 end
 
@@ -58,10 +58,27 @@ local function recv_package(last)
 	return unpack_package(last .. r)
 end
 
+local function print_package(text)
+	if text == nil then
+		print("error~~~~~")
+		return
+	end
+	print(text.v, text.p, text.msg)
+	local t = protobuf.decode("PROTOCOL.role_info", text.msg)
+	--local t = protobuf.decode("PROTOCOL.role_info", text)
+	if t == false then
+		print("error :", l_error)
+	else
+		print(t.name)
+		for k,v in pairs(t) do
+			if type(k) == "string" then
+				print(k,v)
+			end
+		end
+	end
+end
+
 local last = ""
-
-
-
 local function dispatch_package()
 	while true do
 		local v
@@ -69,9 +86,8 @@ local function dispatch_package()
 		if not v then
 			break
 		end
-		
-		print("recv~~~~~~~~~~~~~~", v)
-		--print_package(host:dispatch(v))
+		print_package(p.unpack(v))
+		--print_package(v)
 	end
 end
 
@@ -79,9 +95,30 @@ local create_role_req = {
 	name = "Alice"
 }
 
-local buffer = protobuf.encode("PROTOCOL.create_role_req", create_role_req)
+local init_role = {
+		 name = "testname", level = 1, exp = 0, points = 1, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
+		 builds = {
+		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, collect_time, finish,time_c_type(0 建造1升级2造兵)
+			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 , collect_time = 123435353},
+		 	{ id = 105, level = 1, index = 3,  x = 45, y = 30, finish = 1 },
+	        	{ id = 108, level = 1, index = 4,  x = 55, y = 35, finish = 1 },
+	        },
+	        armylvs = {
+	        	[1001] = { id = 1001, level = 1 }, 
+	        	[1002] = { id = 1002, level = 1 },
+	        	[1003] = { id = 1003, level = 1 },
+	        	[1004] = { id = 1004, level = 1 },
+	        	[1005] = { id = 1005, level = 1 },
+	        	[1006] = { id = 1006, level = 1 },
+	        }
+	}
 
-local t = protobuf.decode("PROTOCOL.create_role_req", buffer)
+--local buffer = protobuf.encode("PROTOCOL.create_role_req", create_role_req)
+local buffer = protobuf.encode("PROTOCOL.role_info", init_role)
+
+--local t = protobuf.decode("PROTOCOL.create_role_req", buffer)
+local t = protobuf.decode("PROTOCOL.role_info", buffer)
+
 print(t.name)
 for k,v in pairs(t) do
 	if type(k) == "string" then
@@ -89,7 +126,7 @@ for k,v in pairs(t) do
 	end
 end
 
-send_package(fd, p.pack(1,1002,buffer))
+send_package(fd, p.pack(0,1002,buffer))
 --send_package(fd, buffer)
 
 while true do

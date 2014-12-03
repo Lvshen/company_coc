@@ -23,15 +23,30 @@ local function send_package(pack)
 		pack
 
 	socket.write(client_fd, package)
-	--socket.write(client_fd, netpack.pack(pack))
 end
 
 local function pbc_test()
-	local create_role_req = {
-	name = "Alice"
+	local init_role = {
+		 name = "testname", level = 1, exp = 0, points = 10, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
+		 builds = {
+		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, collect_time, finish,time_c_type(0 建造1升级2造兵)
+			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 , collect_time = 123435353},
+		 	{ id = 105, level = 1, index = 3,  x = 45, y = 30, finish = 1 },
+	        	{ id = 108, level = 1, index = 4,  x = 55, y = 35, finish = 1 },
+	        },
+	        armylvs = {
+	        	[1001] = { id = 1001, level = 1 }, 
+	        	[1002] = { id = 1002, level = 1 },
+	        	[1003] = { id = 1003, level = 1 },
+	        	[1004] = { id = 1004, level = 1 },
+	        	[1005] = { id = 1005, level = 1 },
+	        	[1006] = { id = 1006, level = 1 },
+	        }
 	}
-	local buffer = protobuf.encode("PROTOCOL.create_role_req", create_role_req)
-	send_package(buffer)
+
+	local buffer = protobuf.encode("PROTOCOL.role_info", init_role)
+	send_package(p.pack(1, 1002, buffer))
+	--send_package(buffer)
 end
 
 skynet.register_protocol {
@@ -41,12 +56,19 @@ skynet.register_protocol {
 		return skynet.tostring(msg,sz)
 	end,
 	dispatch = function (session, address, text)
-		print("@@@@@@@@@", text)
+		--print("@@@@@@@@@", text)
 		data = p.unpack(text)
-		print("receive ok",data.v,data.p, data.msg)
-		local t = protobuf.decode("PROTOCOL.create_role_req", data.msg)
-		print(t.name)
-		pbc_test()
+		--print("receive ok",data.v,data.p, data.msg)
+		local t , l_error = protobuf.decode("PROTOCOL.role_info", data.msg)
+		--local t , l_error = protobuf.decode("PROTOCOL.role_info", text)
+		if t == false then
+			print("error :", l_error)
+			pbc_test()
+		else
+			print(t.name)
+			pbc_test()
+		end
+		--pbc_test()
 		--[[
 		local ok,result
 		if data.p == 1001 then
