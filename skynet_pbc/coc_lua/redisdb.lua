@@ -70,19 +70,19 @@ function command.InitUserRole(id, name)
 	local now = skynet.time()
 	local init_role = {
 		 name = name, level = 1, exp = 0, points = 0, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
-		 build = {
+		 builds = {
 		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, collect_time, finish,time_c_type(0 建造1升级2造兵)
 			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 , collect_time = now},
 		 	{ id = 105, level = 1, index = 3,  x = 45, y = 30, finish = 1 },
 	        	{ id = 108, level = 1, index = 4,  x = 55, y = 35, finish = 1 },
 	        },
-	        armys_lv = {
-	        	[1001] = { id = 1001, level = 1 }, 
-	        	[1002] = { id = 1002, level = 1 },
-	        	[1003] = { id = 1003, level = 1 },
-	        	[1004] = { id = 1003, level = 1 },
-	        	[1005] = { id = 1003, level = 1 },
-	        	[1006] = { id = 1003, level = 1 },
+	        armylvs = {
+	        	{ id = 1001, level = 1 }, 
+	        	{ id = 1002, level = 1 },
+	        	{ id = 1003, level = 1 },
+	        	{ id = 1004, level = 1 },
+	        	{ id = 1005, level = 1 },
+	        	{ id = 1006, level = 1 },
 	        }
 	        --armys = {id = 109, index = 9, {id = 1001, count = 5,  remain_time, finish}}
 	        --[[
@@ -97,7 +97,7 @@ function command.InitUserRole(id, name)
 	local t = {}
 	for key, value in pairs(init_role) do
 		if type(value) == "table" then
-			if key ~= "build" then
+			if key ~= "builds" then
 				table.insert(t, key)
 				table.insert(t, skynet.serialize(value))
 			end
@@ -110,7 +110,7 @@ function command.InitUserRole(id, name)
 	db:multi()
 	db:hmset(t)
 	t = {}
-	for key, value in pairs(init_role.build) do
+	for key, value in pairs(init_role.builds) do
 		if type(value) == "table" then
 			table.insert(t, value.index)
 			table.insert(t, skynet.serialize(value))
@@ -122,7 +122,7 @@ function command.InitUserRole(id, name)
 	table.insert(t, 1, build_key)
 	db:hmset(t)
 	db:exec()
-	return init_role
+	return 0, init_role
 end
 
 local function re_build_finish(build)
@@ -143,7 +143,7 @@ end
 function command.LoadRoleAllInfo(id)
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)
-	local armys_key = string.format("role:[%d]:army", id)
+	--local armys_key = string.format("role:[%d]:army", id)
 	if (exists(data_key)) == 0 then
 		return nil
 	end
@@ -151,18 +151,23 @@ function command.LoadRoleAllInfo(id)
 	db:multi()
 	db:hgetall(data_key) --k = 1
 	db:hgetall(build_key) --k = 2
-	db:hgetall(armys_key)
+	--db:hgetall(armys_key)
 	local t = db:exec()
 	local r = {}
-	r["build"] = {}
-	r["armys"] = {}
+	r["builds"] = {}
+	--r["armys"] = {}
 	for k, v in pairs(t) do
 		if k == 1 then
 			 for i = 1, #v / 2 do
-			       r[v[2*i - 1]] = v[2*i]
+			 	local key = v[2*i - 1];
+			 	if key == "armylvs" then
+					r[key] =  table.loadstring(v[2*i])
+			 	else
+			       	r[key] = v[2*i]
+			       end
 			  end			
 		else
-			local _t = r["build"]
+			local _t = r["builds"]
 			local tab_build = {}
 			local update_flag = false
 			for i = 1, #v/2 do

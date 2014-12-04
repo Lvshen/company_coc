@@ -2,14 +2,10 @@ package.path = "./coc_lua/protocol/?.lua;./coc_lua/build/?.lua;" .. package.path
 
 local skynet = require "skynet"
 local socket = require "socket"
-local sproto = require "sproto"
-local proto = require "proto"
 local buildoperate = require "buildoperate"
-local logger = require "log"
-
 local p = require "p.core"
-
 local protobuf = require "protobuf"
+require "protocolcmd"
 
 addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
@@ -22,6 +18,70 @@ local heartbeat_time
 local uuid
 local role_info = {}
 
+local function send_package(pack)
+	local size = #pack
+	local package = string.char(bit32.extract(size,8,8)) ..
+		string.char(bit32.extract(size,0,8))..
+		pack
+
+	socket.write(client_fd, package)
+end
+
+local function CreateRole(msg)
+	local t , l_error = protobuf.decode("PROTOCOL.create_role_req", string.sub(msg, 7))
+	local rsp = {}
+	if t == false then
+		skynet.error("CreateRole decode error : "..l_error)
+		return
+	else
+		if role_info.name ~= nil then
+			rsp["result"] = 1
+			rsp["roleinfo"] = role_info
+		else
+			local result, r = skynet.call("REDISDB", "lua", "InitUserRole", uuid, t.name)
+			rsp["result"] = result
+			rsp["roleinfo"] = r
+		end
+	end
+	skynet.error(skynet.print_r(rsp))
+	local buffer = protobuf.encode("PROTOCOL.create_role_rsp", rsp)
+	send_package(p.pack(1, PCMD_CREATEROLE_RSP, buffer))
+end
+
+local function LoadRoleInfo()
+	local rsp = {}
+	if role_info.name == nil then
+		rsp["result"] = 1
+	else
+		rsp["result"] = 0
+		rsp["roleinfo"] = role_info
+	end
+	skynet.error(skynet.print_r(rsp))
+	local buffer = protobuf.encode("PROTOCOL.load_role_rsp", rsp)
+	local t = protobuf.decode("PROTOCOL.load_role_rsp", buffer)
+	skynet.error("##############################################")
+	skynet.error(skynet.print_r(t))
+	send_package(p.pack(1, PCMD_LOADROLE_RSP, buffer))
+end
+
+local function Buildaction(msg)
+	local t , l_error = protobuf.decode("PROTOCOL.buildaction_req", string.sub(msg, 7))
+	local rsp = {}
+	if t == false then
+		skynet.error("Buildaction decode error : "..l_error)
+		return
+	else
+		local result, index, changeinfo, value = buildoperate.build_operate(self, role_info)
+		if result == 0 then
+			UpdateRoleInfo(changeinfo)	
+		end
+		rsp["result"] = result
+		rsp["index"] = index
+		rsp["value"] = value
+		local buffer = protobuf.encode("PROTOCOL.buildaction_rsp", rsp)
+		send_package(p.pack(1, PCMD_BUILDACTION_RSP, buffer))
+	end
+end
 
 skynet.register_protocol {
 	name = "client",
@@ -29,18 +89,18 @@ skynet.register_protocol {
 	unpack = function (msg, sz)	
 		return skynet.tostring(msg, sz)
 	end,
-	dispatch = function (session, address, text)
-		data = p.unpack(text)
-		print("receive ok",data.v,data.p, data.msg)
-		local t = protobuf.decode("PROTOCOL.create_role_req", data.msg)
+	dispatch = function (session, address, msg)
+		data = p.unpack(msg)
+		skynet.error("receive ok "..data.v.." "..data.p)
+		if data.p == PCMD_CREATEROLE_REQ then
+			CreateRole(msg)
+		elseif data.p == PCMD_LOADROLE_REQ then
+			LoadRoleInfo()
+		elseif data.p == PCMD_BUILDACTION_REQ then
+			Buildaction(msg)
+		end
 	end
 }
-
-
-local function LoadRoleInfo()
-	for k, v in pairs(role_info) 
-	end
-end
 
 --update role_info
 function UpdateRoleInfo(changed_info)
@@ -65,15 +125,6 @@ local gate
 local userid, subid
 
 local CMD = {}
-
-local function send_package(fd, pack)
-	local size = #pack
-	local package = string.char(bit32.extract(size,8,8)) ..
-		string.char(bit32.extract(size,0,8))..
-		pack
-
-	socket.write(fd, package)
-end
 
 local action = {
 	["goldcoin"] = function(value) 
@@ -117,8 +168,8 @@ function CMD.afk(source)
 end
 
 function CMD.heartbeat(source, fd)
+	client_fd = fd
 	heartbeat_time = skynet.time()
-	print("fd = ", fd, heartbeat_time)
 	skynet.fork(function()
 	while true do
 		if (skynet.time() - heartbeat_time) > 60 then

@@ -61,12 +61,12 @@ static int _unpack(lua_State *L)
 	uint32_t p;
 	const char * data;
 	const char * msg;
-	size_t size;
+	//size_t size;
 	
 	uint8_t * buffer=malloc(6);
 	memset(buffer, 0, 6);
-	data = luaL_checklstring(L, 1, &size);
-	
+	//data = luaL_checklstring(L, 1, &size);
+	data = luaL_checkstring(L, 1);
 	memcpy(buffer, data, 6);
 	msg = data+6;
 	

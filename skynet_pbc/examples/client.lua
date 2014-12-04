@@ -58,13 +58,15 @@ local function recv_package(last)
 	return unpack_package(last .. r)
 end
 
-local function print_package(text)
+local function print_package(v)
+	local text = p.unpack(v)
 	if text == nil then
 		print("error~~~~~")
 		return
 	end
-	print(text.v, text.p, text.msg)
-	local t = protobuf.decode("PROTOCOL.role_info", text.msg)
+	print(text.v, text.p)
+	
+	local t = protobuf.decode("PROTOCOL.role_info", string.sub(v, 7))
 	--local t = protobuf.decode("PROTOCOL.role_info", text)
 	if t == false then
 		print("error :", l_error)
@@ -86,8 +88,7 @@ local function dispatch_package()
 		if not v then
 			break
 		end
-		print_package(p.unpack(v))
-		--print_package(v)
+		print_package(v)
 	end
 end
 

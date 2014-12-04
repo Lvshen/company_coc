@@ -27,7 +27,7 @@ end
 
 local function pbc_test()
 	local init_role = {
-		 name = "testname", level = 1, exp = 0, points = 10, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
+		 name = "testname", level = 1, exp = 0, points = 0, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
 		 builds = {
 		 	{ id = 100, level = 1, index = 1,  x = 35, y = 20, finish = 1 },--build_time , remain_time, collect_time, finish,time_c_type(0 建造1升级2造兵)
 			{ id = 103, level = 1, index = 2,  x = 40, y = 25, finish = 1 , collect_time = 123435353},
@@ -45,6 +45,7 @@ local function pbc_test()
 	}
 
 	local buffer = protobuf.encode("PROTOCOL.role_info", init_role)
+	print("buffer size=", #buffer)
 	send_package(p.pack(1, 1002, buffer))
 	--send_package(buffer)
 end
@@ -57,15 +58,20 @@ skynet.register_protocol {
 	end,
 	dispatch = function (session, address, text)
 		--print("@@@@@@@@@", text)
+		local test = string.sub(text, 7)
 		data = p.unpack(text)
 		--print("receive ok",data.v,data.p, data.msg)
-		local t , l_error = protobuf.decode("PROTOCOL.role_info", data.msg)
+		local t , l_error = protobuf.decode("PROTOCOL.role_info", test)
 		--local t , l_error = protobuf.decode("PROTOCOL.role_info", text)
 		if t == false then
 			print("error :", l_error)
 			pbc_test()
 		else
-			print(t.name)
+			for k,v in pairs(t) do
+				if type(k) == "string" then
+					print(k,v)
+				end
+			end
 			pbc_test()
 		end
 		--pbc_test()

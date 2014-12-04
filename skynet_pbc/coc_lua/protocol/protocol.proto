@@ -20,9 +20,10 @@ message build_info
 message army 
 {
 	required int32 id = 1;						//兵种id
-	required int32 count = 2;					//兵数量
-	required int32 finish = 3;					//0未完成 1完成
-	required int32 remain_time = 4;				//finish=0 时剩余时间
+	required int32 count = 2;					//完成兵数量
+	required int32 counting = 3;					//正在造兵数量
+	required int32 finish = 4;					//0未完成 1完成
+	required int32 remain_time = 5;				//finish=0 时剩余时间
 }
 
 message army_info 
@@ -52,15 +53,16 @@ message role_info
 	required int32 water = 8;					//圣水
 	required int32 max_water = 9;				//最大可拥有圣水量
 	required int32 build_count = 10;				//建筑数目(即为建筑索引计数)
-	repeated build_info builds = 11;					//建筑
-	repeated army_info armys = 12;					//军队
-	repeated army_lv armylvs = 13;			      			 //各兵种等级
+	repeated build_info builds = 11;				//建筑
+	repeated army_info armys = 12;				//军队
+	repeated army_lv armylvs = 13;			      	//各兵种等级
 }
 
 //创建角色/村庄
 message create_role_req
 {	
 	required string name = 1;					//角色/村庄名字
+	
 }
 
 message create_role_rsp
@@ -73,7 +75,7 @@ message create_role_rsp
 message load_role_rsp
 {
 	required int32 result = 1;					//0 成功 1 新角色资料空
-	required role_info roleinfo = 2;
+	optional role_info roleinfo = 2;
 }
 
 
@@ -83,7 +85,7 @@ message load_role_rsp
 //id(建筑id), index(建筑索引), x/y(建筑横纵坐标) 
 //result(返回结果-1请求错误 0 成功, 1 系统服务器错误, 2金币或圣水不足, 3建筑不存在, 4 建筑达到上限5 等级达到上限, 6 建筑正在建造中
 //		7 造兵空间不足)
-message buildaction 
+message buildaction_req 
 {
 	message upgrade_build 						//升级建筑
 	{					
@@ -115,7 +117,7 @@ message buildaction
 		required int32 build_id = 3;
 		required int32 index = 4;
 	}
-	optional  int32 type = 1;								//0 升级建筑1 建造建筑 2 收集建筑3 移动建筑4 造兵
+	required  int32 type = 1;								//0 升级建筑1 建造建筑 2 收集建筑3 移动建筑4 造兵
 	optional  upgrade_build upgrade = 2;
 	optional  place_build place = 3;
 	optional  collect_resource collect = 4;
@@ -124,7 +126,7 @@ message buildaction
 }
 
 //建筑操作返回
-message build_action_rsp 
+message buildaction_rsp 
 {
 	required int32 result = 1;
 	optional int32 index = 2;

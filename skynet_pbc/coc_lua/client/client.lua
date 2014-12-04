@@ -4,10 +4,10 @@ package.path = "lualib/?.lua;coc_lua/?.lua;coc_lua/protocol/?.lua"
 local socket = require "clientsocket"
 local crypt = require "crypt"
 local bit32 = require "bit32"
-local proto = require "proto"
+
 local protobuf = require "protobuf"
 local p = require "p.core"
-
+require "protocolcmd"
 addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
 addr:close()
@@ -179,6 +179,35 @@ local function recv_package(last)
 	return unpack_package(last .. r)
 end
 
+local function print_package(v)
+	local data = p.unpack(v)
+	if data == nil then
+		print("error~~~~~")
+		return
+	end
+	print(data.v, data.p)
+	local t
+	if data.p == PCMD_CREATEROLE_RSP then
+		t = protobuf.decode("PROTOCOL.create_role_rsp", string.sub(v, 7))
+	elseif data.p == PCMD_LOADROLE_RSP then
+		t = protobuf.decode("PROTOCOL.load_role_rsp", string.sub(v, 7))
+	elseif data.p == PCMD_BUILDACTION_RSP then
+		t = protobuf.decode("PROTOCOL.buildaction_rsp", string.sub(v, 7))
+	end
+	if t == false then
+		print("error :", l_error)
+	else
+		for k,v in pairs(t) do
+			if type(k) == "string" then
+				if type(v) == "table" then
+					print_r(v)
+				else
+					print(k,v)
+				end
+			end
+		end
+	end
+end
 
 local function dispatch_package()
 	while true do
@@ -187,7 +216,7 @@ local function dispatch_package()
 		if not v then
 			break
 		end
-		--print_package(host:dispatch(v))
+		print_package(v)
 	end
 end
 
@@ -202,26 +231,42 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 local result = readpackage()
 print(result)
 assert(result == "200 OK")
---send_request("handshake", { hmac = handshake .. ":" .. crypt.base64encode(hmac) })
---send_request("handshake", { hmac = "asdf" })
 
-local create_role_req = {
-	name = "Alice"
+
+local req = {
+	[0] = {name = "Alice"},
+		--[[
+		, armys = {{id = 102, count = 5, finish = 1, remain_time = 2352}, {id = 103, count = 5, finish = 1, remain_time = 23552}}, 
+		armylvs = {
+	        	{ id = 1001, level = 1 }, 
+	        	{ id = 1002, level = 1 },
+	        	{ id = 1003, level = 1 },
+	        	{ id = 1003, level = 1 },
+	        	{ id = 1003, level = 1 },
+	        	{ id = 1003, level = 1 },
+	        }},
+	        ]]
+	[2] = {type = 0, upgrade = {id = 103, index = 5}},
+	[3] = {type = 1, place = {id = 103, x = 20, y = 30}},
+	[4] = {type = 2, collect = {id = 103, index = 5}},
+	[5] = {type = 3, move = {id = 103, index = 5, x = 10, y = 55}}
 }
 
-local buffer = protobuf.encode("PROTOCOL.create_role_req", create_role_req)
-
-local t = protobuf.decode("PROTOCOL.create_role_req", buffer)
-print(t.name)
-for k,v in pairs(t) do
-	if type(k) == "string" then
-		print(k,v)
-	end
+local buffer
+local itype = 1
+if itype == 0 then
+	--print_r(req[itype])
+	buffer = protobuf.encode("PROTOCOL.create_role_req", req[itype])
+	--local t = protobuf.decode("PROTOCOL.create_role_req", buffer)
+	--print("##############################################")
+	--print_r(t)
+	send_package(fd, p.pack(1,PCMD_CREATEROLE_REQ,buffer))
+elseif itype == 1 then
+	send_package(fd, p.pack(1,PCMD_LOADROLE_REQ,""))
+else
+	buffer = protobuf.encode("PROTOCOL.buildaction_req", req[itype])
+	send_package(fd, p.pack(1,PCMD_BUILDACTION_REQ,buffer))
 end
-
-send_package(fd, p.pack(1,1002,buffer))
-
-
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()

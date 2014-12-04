@@ -383,6 +383,10 @@ local function produce_armys(action, role_info)
 			skynet.error(string.format("produce army id : %d need space(%d), but build space(%d) is not enough!", army_id, need_space, config_builod.space))
 			return 7
 		end
+		role_armys = {}
+		role_armys["index"] = index
+		role_armys["id"] = army_id
+		role_armys["sum_count"] = 0
 	else
 		local role_armys_count = role_armys.sum_count
 		if need_space + role_armys_count > config_builod.space then
@@ -404,14 +408,14 @@ local function produce_armys(action, role_info)
 	local army = {}
 	army["id"] = army_id
 	army["count"] = count
+	army["counting"] = 0
 	army[remain_time] = needtime
 	army["finish"] = 0
 	if changeinfo.armys == nil then
-		changinfo.armys = {}
-		local temp = changinfo.armys
-		
+		changinfo.armys = {}		
 	end
-	table.insert(changeinfo.build, build)
+	table.insert(changinfo.armys, army)
+	--table.insert(changeinfo.build, build)
 	return 0, index, changeinfo
 	
 end
