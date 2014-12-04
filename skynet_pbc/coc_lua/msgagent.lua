@@ -71,7 +71,7 @@ local function Buildaction(msg)
 		skynet.error("Buildaction decode error : "..l_error)
 		return
 	else
-		local result, index, changeinfo, value = buildoperate.build_operate(self, role_info)
+		local result, index, changeinfo, value = buildoperate.build_operate(t, role_info)
 		if result == 0 then
 			UpdateRoleInfo(changeinfo)	
 		end
