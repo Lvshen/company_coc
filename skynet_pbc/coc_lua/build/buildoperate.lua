@@ -376,7 +376,7 @@ local function produce_armys(action, role_info)
 		skynet.error(string.format("army id : %d level(%d) is error!", army_id, army_lv))
 		return 1
 	end
-	local role_armys = role_info.armys[index];
+	local role_armys = role_info.armys[index]
 	local need_space = count * config_army.space
 	if role_armys == nil then
 		if need_space > config_builod.space then
@@ -385,7 +385,7 @@ local function produce_armys(action, role_info)
 		end
 		role_armys = {}
 		role_armys["index"] = index
-		role_armys["id"] = army_id
+		role_armys["id"] = build_id
 		role_armys["sum_count"] = 0
 	else
 		local role_armys_count = role_armys.sum_count
@@ -401,7 +401,7 @@ local function produce_armys(action, role_info)
 		return 2
 	end
 	local changeinfo = {}
-	changeinfo["armys"] = role_info.armys
+	changeinfo["armys"] = role_info.armys or {}
 	changeinfo["goldcoin"] = have_money - need_money
 	local now = skynet.time()
 	local needtime = config_army.time * count
@@ -411,11 +411,9 @@ local function produce_armys(action, role_info)
 	army["counting"] = 0
 	army[remain_time] = needtime
 	army["finish"] = 0
-	if changeinfo.armys == nil then
-		changinfo.armys = {}		
-	end
-	table.insert(changinfo.armys, army)
-	--table.insert(changeinfo.build, build)
+	table.insert(role_armys, army)
+	table.insert(chageinfo.armys, role_armys)
+	
 	return 0, index, changeinfo
 	
 end

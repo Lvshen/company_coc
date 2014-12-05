@@ -1,3 +1,38 @@
+/***********************************************************
+服务器与客户端通信消息格式:
+
+前10个字节包含消息头+ 消息大小
+
+客户端与服务器接发消息按统一格式解压包: 一个完整msg 必须经过pack->netpack 才能作为正确格式发送，相反接受即逆运算
+
+如: 一个经过协议序列化的msg 字符串大小为size必须经过pack->netpack
+
+(v,p为消息命令头v现暂时保留,默认值为1，p 为如1002类似值区分消息类型)	
+pack:
+	buffer = (uint8_t *)malloc(size+6);
+	buffer[0] = (v >> 8) & 0xff;
+	buffer[1] = v & 0xff;
+	buffer[2] = (p >> 24) & 0xff;
+	buffer[3] = (p >> 16) & 0xff;
+	buffer[4] = (p >> 8) & 0xff;
+	buffer[5] = p & 0xff;
+	memcpy(buffer+6, msg, size);
+
+netpack:
+	uint8_t *ch = (uint8_t *)malloc(size + 2);
+	ch[0] = (size>>8) & 0xff;
+	ch[1] = size & 0xff;
+	memcpy(ch + 2, msg, size);
+
+
+unpack
+	v = buffer[0] << 8 | buffer[1];
+	p = (buffer[2] << 24) | (buffer[3] << 16) | (buffer[4] << 8) | buffer[5];
+
+
+***************************************************************/
+
+
 
 package PROTOCOL;
 
@@ -22,8 +57,7 @@ message army
 	required int32 id = 1;						//兵种id
 	required int32 count = 2;					//完成兵数量
 	required int32 counting = 3;					//正在造兵数量
-	required int32 finish = 4;					//0未完成 1完成
-	required int32 remain_time = 5;				//finish=0 时剩余时间
+	required int32 remain_time = 4;				//finish=0 时剩余时间
 }
 
 message army_info 
@@ -31,7 +65,8 @@ message army_info
 	required int32 index = 1;					//建筑索引
 	required int32 id = 2;						//建筑id
 	required int32 sum_count = 3;				// (可选)总兵占用单位= 单兵种单位* 单兵种数量 + ...
-	repeated army armys = 4;
+	required int32 finish = 4;					//0未完成 1完成
+	repeated army armys = 5;
 }
 
 message army_lv 
