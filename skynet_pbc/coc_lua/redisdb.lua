@@ -140,10 +140,27 @@ local function re_build_finish(build)
 	return false
 end
 
+local function re_army_finish(army_info)
+	local now = skynet.time()
+	for k, v in pairs(army_info) do
+		local interval = now - v.create_time
+		if interval > v.remain_time then
+			v.count = v.count + v.counting
+			v.counting = 0
+			v.remain_time = 0
+		else
+			local counted = math.floor((interval * v.counting) / (v.remain_time))
+			v.count = v.count + counted
+			v.counting = v.counting - counted
+			v.remain_time = v.remain_time - interval
+		end
+	end
+end
+
 function command.LoadRoleAllInfo(id)
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)
-	--local armys_key = string.format("role:[%d]:army", id)
+	local armys_key = string.format("role:[%d]:army", id)
 	if (exists(data_key)) == 0 then
 		return nil
 	end
@@ -151,11 +168,12 @@ function command.LoadRoleAllInfo(id)
 	db:multi()
 	db:hgetall(data_key) --k = 1
 	db:hgetall(build_key) --k = 2
-	--db:hgetall(armys_key)
+	db:hgetall(armys_key) --k=3
 	local t = db:exec()
 	local r = {}
 	r["builds"] = {}
-	--r["armys"] = {}
+	r["armys"] = {}
+	print("&&&&&&&&&&&&&", r.builds)
 	for k, v in pairs(t) do
 		if k == 1 then
 			 for i = 1, #v / 2 do
@@ -166,8 +184,9 @@ function command.LoadRoleAllInfo(id)
 			       	r[key] = v[2*i]
 			       end
 			  end			
-		else
+		elseif k == 2 then
 			local _t = r["builds"]
+			print("&&&&&&&&&&&&&", type(r.builds))
 			local tab_build = {}
 			local update_flag = false
 			for i = 1, #v/2 do
@@ -176,11 +195,27 @@ function command.LoadRoleAllInfo(id)
 					table.insert(tab_build, temp_t)
 					update_flag = true
 				end
-				 _t [tonumber(v[2*i - 1])] = temp_t
-				--table.insert(r["build"], _t.index, table.loadstring(v[2*i]))
+				--print("@@@@@@@@", tonumber(v[2*i - 1]))
+				_t[tonumber(v[2*i - 1])] = temp_t 
 			end
 			if update_flag == true then
 				UpdateBuild(id, tab_build)
+			end
+		elseif k == 3 then
+			local _t = r["builds"]
+			local tab_army = {}
+			local update_flag = false
+			for i = 1, #v/2 do
+				local temp_t = table.loadstring(v[2*i])
+				if temp_t.finish == 0 then
+					re_armys_finish(temp_t)
+					table.insert(tab_army, temp_t)
+					update_flag = true
+				end
+				 _t[tonumber(v[2*i - 1])] = temp_t
+			end
+			if update_flag == true then
+				UpdateArmy(id, tab_army)
 			end
 		end
 	end
@@ -204,7 +239,23 @@ end
 function UpdateBuild(id, tab_build)
 	assert(type(tab_build) == "table", "data is error")
 	local key = string.format("role:[%d]:build", id)
-	skynet.print_r(tab_build)
+	skynet.error(skynet.print_r(tab_build))
+	assert(db:exists(key) == true, "key: "..key.." not exists")
+	local t = {}
+	for k, v in pairs(tab_build) do
+		if type(v) == "table" then 
+			table.insert(t, v.index)
+			table.insert(t, skynet.serialize(v))
+		end
+	end
+	table.insert(t, 1, key)
+	db:hmset(t)
+end
+
+function UpdateArmy(id, tab_army)
+	assert(type(tab_army) == "table", "data is error")
+	local key = string.format("role:[%d]:army", id)
+	skynet.error(skynet.print_r(tab_army))
 	assert(db:exists(key) == true, "key: "..key.." not exists")
 	local t = {}
 	for k, v in pairs(tab_build) do
@@ -221,18 +272,31 @@ function command.UpdateRoleInfo(id, tab)
 	assert(type(tab) == "table", "data is error")
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)
+	local army_key = string.format("role:[%d]:army", id)
 	local data_t = {}
 	local build_t = {}
+	local army_t = {}
 	local empty_data = true
 	local empty_build = true
+	local empty_army = true
 	for k, v in pairs(tab) do
 		if type(v) == "table" then
-			if k == "build" then
+			if k == "builds" then
 				for _k, _v in pairs(v) do
 					empty_build = false
 					table.insert(build_t, _v.index)
 					table.insert(build_t, skynet.serialize(_v))
 				end
+			elseif k == "armys" then
+				for _k, _v in pairs(v) do
+					empty_army = false
+					table.insert(army_t, _v.index)
+					table.insert(army_t, skynet.serialize(_v))
+				end
+			else
+				empty_data = false
+				table.insert(data_t, k)
+				table.insert(data_t, skynet.serialize(v))
 			end
 		else
 			empty_data = false
@@ -245,10 +309,11 @@ function command.UpdateRoleInfo(id, tab)
 	db:multi()
 	if empty_data == false then
 		db:hmset(data_t)
-	end
-	if empty_build == false then
+	elseif empty_build == false then
 		db:hmset(build_t)
-	end 
+	elseif empty_army == false then
+		db:hmset(army_t)
+	end
 	db:exec()
 end
 

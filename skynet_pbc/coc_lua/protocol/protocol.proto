@@ -57,7 +57,8 @@ message army
 	required int32 id = 1;						//兵种id
 	required int32 count = 2;					//完成兵数量
 	required int32 counting = 3;					//正在造兵数量
-	required int32 remain_time = 4;				//finish=0 时剩余时间
+	required int32 create_time = 4;				//开始造兵时间 
+	required int32 remain_time = 5;				//finish=0 时剩余时间
 }
 
 message army_info 

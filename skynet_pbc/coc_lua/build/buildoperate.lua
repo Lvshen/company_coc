@@ -206,18 +206,18 @@ local function place_build(action, role_info)
 		return 3
 	end
 	skynet.print_r(role_info)
-	local camp_lv = role_info.build[1].level
+	local camp_lv = role_info.builds[1].level
 	assert(camp_lv ~= nil, "roleinfo error~")
 	local limit_config = build_numlimit[camp_lv]
 	assert(limit_config ~= nil, "build_lvlimit config error~"..camp_lv)
-	local build_count = build_count(build_id, role_info.build)
+	local build_count = build_count(build_id, role_info.builds)
 	if limit_config[build_id] == nil or build_count >= limit_config[build_id] then
 		skynet.error(string.format("build id : %d count(%d|%d) is Max in allow, can't build!", tonumber(build_id), build_count,  limit_config[build_id]))
 		return 4
 	end
 	
 	local changeinfo = {}
-	changeinfo["build"] = {}
+	changeinfo["builds"] = {}
 	local need_money = config.build_money
 	local money_type = config.build_money_type
 	local have_money = have_money or 0
@@ -256,7 +256,7 @@ local function place_build(action, role_info)
 		build["finish"] = 0
 	end
 	build["time_c_type"] = 0
-	table.insert(changeinfo.build, build)
+	table.insert(changeinfo.builds, build)
 	return 0, index, changeinfo	
 end
 
@@ -386,7 +386,8 @@ local function produce_armys(action, role_info)
 		role_armys = {}
 		role_armys["index"] = index
 		role_armys["id"] = build_id
-		role_armys["sum_count"] = 0
+		role_armys["sum_count"] = need_space
+		role_armys["finish"] = 0
 	else
 		local role_armys_count = role_armys.sum_count
 		if need_space + role_armys_count > config_builod.space then
@@ -407,15 +408,13 @@ local function produce_armys(action, role_info)
 	local needtime = config_army.time * count
 	local army = {}
 	army["id"] = army_id
-	army["count"] = count
-	army["counting"] = 0
-	army[remain_time] = needtime
-	army["finish"] = 0
+	army["count"] = 0
+	army["counting"] = count
+	army["create_time"] = now
+	army["remain_time"] = needtime
 	table.insert(role_armys, army)
-	table.insert(chageinfo.armys, role_armys)
-	
-	return 0, index, changeinfo
-	
+	table.insert(chageinfo.armys, role_armys)	
+	return 0, index, changeinfo	
 end
 
 --[[

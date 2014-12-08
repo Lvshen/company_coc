@@ -253,7 +253,7 @@ local req = {
 }
 
 local buffer
-local itype = 1
+local itype = 3
 if itype == 0 then
 	--print_r(req[itype])
 	buffer = protobuf.encode("PROTOCOL.create_role_req", req[itype])
