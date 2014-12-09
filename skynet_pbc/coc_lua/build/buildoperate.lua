@@ -57,7 +57,7 @@ local build_config = {
 		[10] = {blood = 420, build_money = 84000, build_money_type = 1, max_value = 100000, produce_speed = 2500, build_time = 345600},
 		[11] = {blood = 450, build_money = 168000, build_money_type = 1, max_value = 150000, produce_speed = 3000, build_time = 518400},
 	},
-	[109] = {
+	[115] = {
 		[1] = {blood = 250, build_money = 150, build_money_type = 1, space = 5, build_time = 60},
 	},
 }
@@ -116,11 +116,15 @@ end
 local function upgrade_build(action, role_info)
 	local index = action.upgrade.index
 	local build_id = action.upgrade.id
-	local build = role_info.build[index]
+	local build = role_info.builds[index]
 	print("--------------")
 	skynet.print_r(build)
 	if build == nil then
 		skynet.error(string.format("(role not this build) build id : %d (index=%d)is not exist!", tonumber(build_id)), index)
+		return 3
+	end
+	if build.id ~= build_id then
+		skynet.error(string.format("(role not this build) build id : %d is not exist!", build_id))
 		return 3
 	end
 	--assert(build_config[build_id] ~= nil, "build id : "..build_id.." is not exist!")
@@ -144,17 +148,17 @@ local function upgrade_build(action, role_info)
 		return 5
 	end
 
-	local camp_lv = role_info.build[1].level
+	local camp_lv = role_info.builds[1].level
 	assert(camp_lv ~= nil, "roleinfo error~")
 	local limit_config = build_lvlimit[camp_lv]
 	assert(limit_config ~= nil, "build_lvlimit config error~"..camp_lv)
 	if limit_config[build_id] == nil or build_lv >= limit_config[build_id] then
-		skynet.error(string.format("build id : %d level is (%d|%d) Max in allow, can't upgrade!", tonumber(build_id), build_lv, limit_config[build_id]))
+		skynet.error(string.format("build id : %d level is (%d|%d) Max in allow, can't upgrade!", tonumber(build_id), build_lv, limit_config[build_id]) or 0)
 		return 5
 	end
 	
 	local changeinfo = {}
-	changeinfo["build"] = {}
+	changeinfo["builds"] = {}
 	local need_money = config.build_money
 	local money_type = config.build_money_type
 	local have_money = have_money or 0
@@ -181,7 +185,7 @@ local function upgrade_build(action, role_info)
 	else
 		build["finish"] = 0
 	end
-	table.insert(changeinfo.build, build)
+	table.insert(changeinfo.builds, build)
 	return 0, index, changeinfo
 end
 
@@ -200,19 +204,24 @@ end
 local function place_build(action, role_info)
 	local build_id = action.place.id
 	print("build_id : ", build_id)
-	local config = build_config[build_id][1]
+	local config = build_config[build_id]
 	if config == nil then
 		skynet.error(string.format("(client request error) build id : %d is not exist!", tonumber(build_id)))
 		return 3
 	end
-	skynet.print_r(role_info)
+	config = config[1]
+	if config == nil then
+		skynet.error(string.format("(client request error) build id : %d is not exist!", tonumber(build_id)))
+		return 3
+	end
+	--skynet.print_r(role_info)
 	local camp_lv = role_info.builds[1].level
 	assert(camp_lv ~= nil, "roleinfo error~")
 	local limit_config = build_numlimit[camp_lv]
 	assert(limit_config ~= nil, "build_lvlimit config error~"..camp_lv)
 	local build_count = build_count(build_id, role_info.builds)
 	if limit_config[build_id] == nil or build_count >= limit_config[build_id] then
-		skynet.error(string.format("build id : %d count(%d|%d) is Max in allow, can't build!", tonumber(build_id), build_count,  limit_config[build_id]))
+		skynet.error(string.format("build id : %d count(%d|%d) is Max in allow, can't build!", tonumber(build_id), build_count,  limit_config[build_id]) or 0)
 		return 4
 	end
 	
@@ -263,9 +272,13 @@ end
 local function collect_resource(action, role_info)
 	local index = action.collect.index
 	local build_id = action.collect.id
-	local build = role_info.build[index]
+	local build = role_info.builds[index]
 	if build == nil then
-		skynet.error(string.format("(role not this build) build id : %d is not exist!", tonumber(build_id)))
+		skynet.error(string.format("(role not this build) build index : %d is not exist!", tonumber(index)))
+		return 3
+	end
+	if build.id ~= build_id then
+		skynet.error(string.format("(role not this build) build id : %d is not exist!", build_id))
 		return 3
 	end
 	--assert(build_config[build_id] ~= nil, "build id : "..build_id.." is not exist!")
@@ -289,7 +302,7 @@ local function collect_resource(action, role_info)
 		return 6
 	end
 	local changeinfo = {}
-	changeinfo["build"] = {}
+	changeinfo["builds"] = {}
 	local now = skynet.time()
 	local interval_time = now - build.collect_time
 	local value = math.floor((interval_time * config.produce_speed) /3600)
@@ -312,23 +325,27 @@ local function collect_resource(action, role_info)
 		return 1
 	end	
 	build.collect_time = now
-	table.insert(changeinfo.build, build)
+	table.insert(changeinfo.builds, build)
 	return 0, index, changeinfo, value
 end
 
 local function move_build(action, role_info)
 	local index = action.move.index
 	local build_id = action.move.id
-	local build = role_info.build[index]
+	local build = role_info.builds[index]
 	if build == nil then
-		skynet.error(string.format("(role not this build) build id : %d is not exist!", tonumber(build_id)))
+		skynet.error(string.format("(role not this build) build index : %d is not exist!", tonumber(index)))
+		return 3
+	end
+	if build.id ~= build_id then
+		skynet.error(string.format("(role not this build) build id : %d is not exist!", build_id))
 		return 3
 	end
 	build.x = action.move.x
 	build.y = action.move.y
 	local changeinfo = {}
-	changeinfo["build"] = {}
-	table.insert(changeinfo.build, build)
+	changeinfo["builds"] = {}
+	table.insert(changeinfo.builds, build)
 	return 0, index, changeinfo
 end
 
@@ -346,11 +363,33 @@ local function update_armys(armys, army)
 	end
 end
 ]]
+
+local function get_armylv(tab_armylv, army_id)
+	for k, v in pairs(tab_armylv) do
+		if v.id == army_id then
+			return v.level
+		end
+	end
+	return 0
+end
+
+local function get_army(tab_army, index)
+	for k, v in pairs(tab_army) do
+		if v.index == index then
+			return v
+		end
+	end
+end
+
 local function produce_armys(action, role_info)
 	local index = action.produce.index
 	local build_id = action.produce.build_id
-	local build = role_info.build[index]
+	local build = role_info.builds[index]
 	if build == nil then
+		skynet.error(string.format("(role not this build) build index : %d is not exist!", index))
+		return 3
+	end
+	if build.id ~= build_id then
 		skynet.error(string.format("(role not this build) build id : %d is not exist!", build_id))
 		return 3
 	end
@@ -360,14 +399,14 @@ local function produce_armys(action, role_info)
 	end	
 	local build_lv = build.level
 	local config_build = build_config[build_id][build_lv]
-	if config_builod.space == nil then
+	if config_build.space == nil then
 		skynet.error(string.format("(client request error) build id : %d is not valid army build!", build_id))
 		return 3
 	end
 	local army_id = action.produce.id
 	local count = action.produce.count
-	local army_lv = role_info.armys_lv[army_id].level
-	if army_lv == nil then
+	local army_lv = get_armylv(role_info.armylvs, army_id)
+	if army_lv == 0 then
 		skynet.error(string.format("(client request error) army id : %d is not valid army !", army_id))
 		return -1
 	end
@@ -376,11 +415,12 @@ local function produce_armys(action, role_info)
 		skynet.error(string.format("army id : %d level(%d) is error!", army_id, army_lv))
 		return 1
 	end
-	local role_armys = role_info.armys[index]
+	--local role_armys = role_info.armys[index]
+	local role_armys = get_army(role_info.armys, index)
 	local need_space = count * config_army.space
 	if role_armys == nil then
-		if need_space > config_builod.space then
-			skynet.error(string.format("produce army id : %d need space(%d), but build space(%d) is not enough!", army_id, need_space, config_builod.space))
+		if need_space > config_build.space then
+			skynet.error(string.format("produce army id : %d need space(%d), but build space(%d) is not enough!", army_id, need_space, config_build.space))
 			return 7
 		end
 		role_armys = {}
@@ -390,8 +430,8 @@ local function produce_armys(action, role_info)
 		role_armys["finish"] = 0
 	else
 		local role_armys_count = role_armys.sum_count
-		if need_space + role_armys_count > config_builod.space then
-			skynet.error(string.format("produce army id : %d need space(%d), but build space(%d) is not enough!", army_id, need_space, config_builod.space))
+		if need_space + role_armys_count > config_build.space then
+			skynet.error(string.format("produce army id : %d need space(%d), but build space(%d) is not enough!", army_id, need_space, config_build.space))
 			return 7
 		end
 	end
@@ -413,7 +453,8 @@ local function produce_armys(action, role_info)
 	army["create_time"] = now
 	army["remain_time"] = needtime
 	table.insert(role_armys, army)
-	table.insert(chageinfo.armys, role_armys)	
+	table.insert(changeinfo.armys, role_armys)	
+	skynet.error(skynet.print_r(changeinfo))
 	return 0, index, changeinfo	
 end
 
@@ -446,7 +487,7 @@ function buildoperate.build_operate(buildaction, roleinfo)
 	elseif type == 3 then
 		return move_build (buildaction, roleinfo)
 	elseif type == 4 then
-		return 
+		return produce_armys(buildaction, roleinfo)
 	else
 		skynet.error(string.format("(client request error) type : %d is not valid!", type))
 	end

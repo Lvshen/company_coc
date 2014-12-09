@@ -247,13 +247,23 @@ local req = {
 	        }},
 	        ]]
 	[2] = {type = 0, upgrade = {id = 103, index = 5}},
-	[3] = {type = 1, place = {id = 103, x = 20, y = 30}},
+	[3] = {type = 1, place = {id = 115, x = 30, y = 40}},
 	[4] = {type = 2, collect = {id = 103, index = 5}},
-	[5] = {type = 3, move = {id = 103, index = 5, x = 10, y = 55}}
+	[5] = {type = 3, move = {id = 103, index = 5, x = 10, y = 55}},
+	[6] = {type = 4, produce = {id = 1001, count = 5, build_id = 115, index = 6}},--, armys={index=1,id=2,sum_count=3,finish=0}
+	[7] = {result=0, roleinfo={name="12442", level = 10, exp = 10, points = 10, gem = 142, goldcoin = 200,max_goldcoin=300,water=23, max_water=5235, build_count =5, armys={index=1,id=2,sum_count=3,finish=0, armys={{id=1,count=3,counting=6,create_time=235235,remain_time=23525}, {index=1,id=2,sum_count=3,finish=0}}}}},
 }
 
+print_r(req[7])
+
+local buffer = protobuf.encode("PROTOCOL.create_role_rsp", req[7])
+
+local t = protobuf.decode("PROTOCOL.create_role_rsp", buffer)
+
+--[[
+
 local buffer
-local itype = 3
+local itype = 1
 if itype == 0 then
 	--print_r(req[itype])
 	buffer = protobuf.encode("PROTOCOL.create_role_req", req[itype])
@@ -280,4 +290,4 @@ while true do
   		--socket.usleep(100)
   	end
   end
-
+]]

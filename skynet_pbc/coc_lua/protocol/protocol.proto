@@ -48,7 +48,8 @@ message build_info
 	required int32 finish = 6;					//建筑、造兵完成标志0未完成 1完成
 	optional int32 remain_time = 7;				//finish=0时建造或升级剩余时间
 	optional int32 time_c_type = 8;				//finish=0时判断处于什么状态0建造 1升级 
-	optional int32 collect_time = 9;				
+	optional int32 collect_time = 9;		
+	optional int32 build_time = 10;				//可选 建造时间
 }
 
 //军队
