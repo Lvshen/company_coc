@@ -141,25 +141,28 @@ local function re_build_finish(build)
 end
 
 local function re_armys_finish(army_info)
-	skynet.error(skynet.print_r(army_info))
+	--skynet.error(skynet.print_r(army_info))
 	local bfinish = true
 	local now = skynet.time()
 	for k, v in pairs(army_info) do
 		if type(v) == "table"  then 
-			local interval = now - v.create_time
-			if interval > v.remain_time then
-				v.count = v.count + v.counting
-				v.counting = 0
-				v.create_time = 0
-				v.remain_time = 0
-			else
-				bfinish = false
-				local counted = math.floor((interval * v.counting) / (v.remain_time))
-				v.count = v.count + counted
-				v.counting = v.counting - counted
-				v.create_time = now
-				v.remain_time = v.remain_time - interval
+			for _k, _v in pairs(v) do
+				local interval = now - _v.create_time
+				if interval > _v.remain_time then
+					_v.count = _v.count + _v.counting
+					_v.counting = 0
+					_v.create_time = 0
+					_v.remain_time = 0
+				else
+					bfinish = false
+					local counted = math.floor((interval * _v.counting) / (_v.remain_time))
+					_v.count = _v.count + counted
+					_v.counting = _v.counting - counted
+					_v.create_time = now
+					_v.remain_time = _v.remain_time - interval
+				end	
 			end
+			
 		end
 	end
 	if bfinish == true then
@@ -219,18 +222,21 @@ function command.LoadRoleAllInfo(id)
 			for i = 1, #v/2 do
 				local temp_t = table.loadstring(v[2*i])
 				if temp_t.finish == 0 then
+					tab_army[tonumber(v[2*i - 1])] = {}
 					re_armys_finish(temp_t)
-					table.insert(tab_army, temp_t)
+					--table.insert(tab_army, temp_t)
+					tab_army[tonumber(v[2*i - 1])] = temp_t
 					update_flag = true
 				end
-				 r.armys[tonumber(v[2*i - 1])] = temp_t
+				r.armys[tonumber(v[2*i - 1])] = temp_t
 			end
 			if update_flag == true then
+				skynet.error("$$$$$$$$$$"..skynet.print_r(tab_army))
 				UpdateArmy(id, tab_army)
 			end
 		end
 	end
-	skynet.error("*************"..skynet.print_r(r))
+	--skynet.error("*************"..skynet.print_r(r))
 	return r
 	
 end
@@ -267,12 +273,12 @@ end
 function UpdateArmy(id, tab_army)
 	assert(type(tab_army) == "table", "data is error")
 	local key = string.format("role:[%d]:army", id)
-	skynet.error(skynet.print_r(tab_army))
+	--skynet.error(skynet.print_r(tab_army))
 	assert(db:exists(key) == true, "key: "..key.." not exists")
 	local t = {}
 	for k, v in pairs(tab_army) do
 		if type(v) == "table" then 
-			table.insert(t, v.index)
+			table.insert(t, k)
 			table.insert(t, skynet.serialize(v))
 		end
 	end

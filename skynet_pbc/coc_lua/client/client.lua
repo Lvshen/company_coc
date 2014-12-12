@@ -91,6 +91,7 @@ local function unpack_f(f)
 	end
 end
 
+--[[
 local readline = unpack_f(unpack_line)
 
 local challenge = crypt.base64decode(readline())
@@ -103,7 +104,7 @@ print("sceret is ", crypt.hexencode(secret))
 
 local hmac = crypt.hmac64(challenge, secret)
 writeline(fd, crypt.base64encode(hmac))
-
+]]
 --type 0 µÇÂ½1 ×¢²á
 local token = { --µÇÂ¼
 	type = 0,
@@ -113,19 +114,30 @@ local token = { --µÇÂ¼
 }
 
 local function encode_token(token)
+	--[[
 	return string.format("%s:%s@%s:%s",
 		crypt.base64encode(token.type),
 		crypt.base64encode(token.user),
 		crypt.base64encode(token.server),
 		crypt.base64encode(token.pass))
-		
+	]]	
+	local str = string.format("%s:%s",token.type,token.user)
+	local type, user, server, password= str:match("(.+):(.+)")
+	print(str)
+	print( "rrrrrrrrrrrrrrrrrrrrrrrrrrrrr", type,user,server,password)
+	return string.format("%s:%s@%s:%s",token.type,token.user,token.server,token.pass)	
 end
 
+--[[
 local etoken = crypt.desencode(secret, encode_token(token))
 local b = crypt.base64encode(etoken)
 writeline(fd, crypt.base64encode(etoken))
+]]
 
-local result = readline()
+writeline(fd, encode_token(token))
+
+--local result = readline()
+local result = unpack_f(unpack_line)
 print(result)
 local code = tonumber(string.sub(result, 1, 3))
 assert(code == 200)
@@ -254,16 +266,17 @@ local req = {
 	[7] = {result=0, roleinfo={name="12442", level = 10, exp = 10, points = 10, gem = 142, goldcoin = 200,max_goldcoin=300,water=23, max_water=5235, build_count =5, armys={index=1,id=2,sum_count=3,finish=0, armys={{id=1,count=3,counting=6,create_time=235235,remain_time=23525}, {index=1,id=2,sum_count=3,finish=0}}}}},
 }
 
+--[[
 print_r(req[7])
 
 local buffer = protobuf.encode("PROTOCOL.create_role_rsp", req[7])
 
 local t = protobuf.decode("PROTOCOL.create_role_rsp", buffer)
+]]
 
---[[
 
 local buffer
-local itype = 1
+local itype = 6
 if itype == 0 then
 	--print_r(req[itype])
 	buffer = protobuf.encode("PROTOCOL.create_role_req", req[itype])
@@ -290,4 +303,4 @@ while true do
   		--socket.usleep(100)
   	end
   end
-]]
+

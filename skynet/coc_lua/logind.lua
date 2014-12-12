@@ -42,6 +42,7 @@ local function register_to_db(user, password)
 end
 
 function server.auth_handler(token)
+	--[[
 	-- the token is base64(user)@base64(server):base64(password)
 	local id
 	local type, user, server, password= token:match("(.+):([^@]+)@([^:]+):(.+)")
@@ -60,6 +61,23 @@ function server.auth_handler(token)
 		assert(r == 0, "user register failed r = "..r)
 	end
 	return server, user, id
+	]]
+
+	local id
+	local type, user, server, password= token:match("(.+):([^@]+)@([^:]+):(.+)")
+	
+	print( "rrrrrrrrrrrrrrrrrrrrrrrrrrrrr", type,user,server,password)
+	if tonumber(type) == 0 then --µÇÂ¼
+		local r, _id = auth_from_db(user, password)	
+		id = _id
+		assert(r == 0, "user Auth failed r = "..r)
+	else --×¢²á
+		local r, _id = register_to_db(user, password)	
+		id = _id
+		assert(r == 0, "user register failed r = "..r)
+	end
+	return server, user, id
+	
 end
 
 function server.login_handler(server, uid, secret, id)

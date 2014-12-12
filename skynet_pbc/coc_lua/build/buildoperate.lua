@@ -58,7 +58,7 @@ local build_config = {
 		[11] = {blood = 450, build_money = 168000, build_money_type = 1, max_value = 150000, produce_speed = 3000, build_time = 518400},
 	},
 	[115] = {
-		[1] = {blood = 250, build_money = 150, build_money_type = 1, space = 5, build_time = 60},
+		[1] = {blood = 250, build_money = 150, build_money_type = 1, space = 15, build_time = 60},
 	},
 }
 
@@ -424,6 +424,7 @@ local function produce_armys(action, role_info)
 			return 7
 		end
 		role_armys = {}
+		role_armys["armys"] = {}
 		role_armys["index"] = index
 		role_armys["id"] = build_id
 		role_armys["sum_count"] = need_space
@@ -438,7 +439,7 @@ local function produce_armys(action, role_info)
 	local have_money = tonumber(role_info.goldcoin)
 	local need_money = config_army.money * count
 	if have_money < need_money then
-		skynet.error(string.format(" build id : %d  money is not enough!(%d|%d|%d)", tonumber(build_id), money_type, need_monye, have_money))
+		skynet.error(string.format(" build id : %d  money is not enough!(%d|%d)", tonumber(build_id), need_money, have_money))
 		return 2
 	end
 	local changeinfo = {}
@@ -452,7 +453,7 @@ local function produce_armys(action, role_info)
 	army["counting"] = count
 	army["create_time"] = now
 	army["remain_time"] = needtime
-	table.insert(role_armys, army)
+	table.insert(role_armys.armys, army)
 	table.insert(changeinfo.armys, role_armys)	
 	skynet.error(skynet.print_r(changeinfo))
 	return 0, index, changeinfo	

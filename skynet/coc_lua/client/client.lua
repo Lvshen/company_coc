@@ -88,6 +88,8 @@ local function unpack_f(f)
 	end
 end
 
+--[[
+
 local readline = unpack_f(unpack_line)
 
 local challenge = crypt.base64decode(readline())
@@ -101,6 +103,8 @@ print("sceret is ", crypt.hexencode(secret))
 local hmac = crypt.hmac64(challenge, secret)
 writeline(fd, crypt.base64encode(hmac))
 
+--]]
+
 --type 0 µÇÂ½1 ×¢²á
 local token = { --µÇÂ¼
 	type = 0,
@@ -110,17 +114,24 @@ local token = { --µÇÂ¼
 }
 
 local function encode_token(token)
+	--[[
 	return string.format("%s:%s@%s:%s",
 		crypt.base64encode(token.type),
 		crypt.base64encode(token.user),
 		crypt.base64encode(token.server),
 		crypt.base64encode(token.pass))
-		
+	--]]
+	return string.format("%s:%s@%s:%s",token.type,token.user,token.server,token.pass)	
 end
 
+
+--[[
 local etoken = crypt.desencode(secret, encode_token(token))
 local b = crypt.base64encode(etoken)
 writeline(fd, crypt.base64encode(etoken))
+]]
+
+writeline(fd, crypt.encode_token(token))
 
 local result = readline()
 print(result)
