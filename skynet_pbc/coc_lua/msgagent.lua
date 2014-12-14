@@ -5,7 +5,7 @@ local socket = require "socket"
 local buildoperate = require "buildoperate"
 local p = require "p.core"
 local protobuf = require "protobuf"
-require "protocolcmd"
+--require "protocolcmd"
 
 addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
@@ -45,7 +45,7 @@ local function CreateRole(msg)
 	end
 	skynet.error(skynet.print_r(rsp))
 	local buffer = protobuf.encode("PROTOCOL.create_role_rsp", rsp)
-	send_package(p.pack(1, PCMD_CREATEROLE_RSP, buffer))
+	--send_package(p.pack(1, PCMD_CREATEROLE_RSP, buffer))
 end
 
 local function LoadRoleInfo()
@@ -61,7 +61,7 @@ local function LoadRoleInfo()
 	local t = protobuf.decode("PROTOCOL.load_role_rsp", buffer)
 	--skynet.error("##############################################")
 	--skynet.error(skynet.print_r(t))
-	send_package(p.pack(1, PCMD_LOADROLE_RSP, buffer))
+	--send_package(p.pack(1, PCMD_LOADROLE_RSP, buffer))
 end
 
 local function Buildaction(msg)
@@ -78,8 +78,8 @@ local function Buildaction(msg)
 		rsp["result"] = result
 		rsp["index"] = index
 		rsp["value"] = value
-		local buffer = protobuf.encode("PROTOCOL.buildaction_rsp", rsp)
-		send_package(p.pack(1, PCMD_BUILDACTION_RSP, buffer))
+		--local buffer = protobuf.encode("PROTOCOL.buildaction_rsp", rsp)
+		--send_package(p.pack(1, PCMD_BUILDACTION_RSP, buffer))
 	end
 end
 
@@ -92,6 +92,7 @@ skynet.register_protocol {
 	dispatch = function (session, address, msg)
 		data = p.unpack(msg)
 		skynet.error("receive ok "..data.v.." "..data.p)
+		--[[
 		if data.p == PCMD_CREATEROLE_REQ then
 			CreateRole(msg)
 		elseif data.p == PCMD_LOADROLE_REQ then
@@ -99,6 +100,7 @@ skynet.register_protocol {
 		elseif data.p == PCMD_BUILDACTION_REQ then
 			Buildaction(msg)
 		end
+		]]
 	end
 }
 

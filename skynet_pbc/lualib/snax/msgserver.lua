@@ -101,7 +101,8 @@ function server.userid(username)
 end
 
 function server.username(uid, subid, servername)
-	return string.format("%s@%s#%s", b64encode(uid), b64encode(servername), b64encode(tostring(subid)))
+	--return string.format("%s@%s#%s", b64encode(uid), b64encode(servername), b64encode(tostring(subid)))
+	return string.format("%s", uid)
 end
 
 function server.logout(username)
@@ -122,6 +123,7 @@ function server.login(username, secret)
 		username = username,
 		response = {},	-- response cache
 	}
+	skynet.error("**********"..skynet.print_r(user_online))
 end
 
 function server.ip(username)
@@ -173,6 +175,7 @@ function server.start(conf)
 
 	-- atomic , no yield
 	local function do_auth(fd, message, addr)
+	--[[
 		local username, index, hmac = string.match(message, "([^:]*):([^:]*):([^:]*)")
 		local u = user_online[username]
 		if u == nil then
@@ -190,7 +193,17 @@ function server.start(conf)
 		if v ~= hmac then
 			return "401 Unauthorized"
 		end
-
+	]]
+		local username, server, secret, subid, index = string.match(message, "([^:]+):([^:]+):([^:]+):([^:]+):([^:]+)")
+		print(message,username, server, secret, subid, index)
+		local u = user_online[username]
+		if u == nil then
+			return "404 User Not Found"
+		end
+		skynet.error(skynet.print_r(u))
+		if secret ~= u.secret then
+			return "401 Unauthorized"
+		end
 		u.version = idx
 		u.fd = fd
 		u.ip = addr

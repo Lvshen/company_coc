@@ -89,7 +89,7 @@ local function launch_slave(auth_handler)
 
 		local token = assert_socket(socket.readline(fd),fd)
 		skynet.error("TT~~~~~~~~", token)
-		local ok, server, uid, id =  pcall(auth_handler,token)
+		local ok, server, uid, secret, id =  pcall(auth_handler,token)
 
 		socket.abandon(fd)
 		return ok, server, uid, secret, id
@@ -137,7 +137,7 @@ local function accept(conf, s, fd, addr)
 		err = err or ""
 		--print("err = ^^^^^^", err)
 		--write(fd,  "200 "..crypt.base64encode(err).."\n")
-		write(fd,  "200 \n")
+		write(fd,  "200 "..err.."\n")
 	else
 		write(fd,  "403 Forbidden\n")
 		error(err)

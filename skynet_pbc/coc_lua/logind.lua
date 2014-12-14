@@ -77,7 +77,7 @@ function server.auth_handler(token)
 		id = _id
 		assert(r == 0, "user register failed r = "..r)
 	end
-	return server, user, id
+	return server, user, password, id 
 	
 end
 

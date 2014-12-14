@@ -7,7 +7,7 @@ local bit32 = require "bit32"
 
 local protobuf = require "protobuf"
 local p = require "p.core"
-require "protocolcmd"
+--require "protocolcmd"
 addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
 addr:close()
@@ -144,7 +144,8 @@ assert(code == 200)
 --writeline(fd, "test~~~~~")
 socket.close(fd)
 
-local subid = crypt.base64decode(string.sub(result, 5))
+--local subid = crypt.base64decode(string.sub(result, 5))
+local subid = string.sub(result, 5)
 
 print("~~~login ok, subid=", subid)
 
@@ -198,6 +199,7 @@ local function print_package(v)
 		return
 	end
 	print(data.v, data.p)
+	--[[
 	local t
 	if data.p == PCMD_CREATEROLE_RSP then
 		t = protobuf.decode("PROTOCOL.create_role_rsp", string.sub(v, 7))
@@ -219,6 +221,7 @@ local function print_package(v)
 			end
 		end
 	end
+	]]
 end
 
 local function dispatch_package()
@@ -234,11 +237,17 @@ end
 
 local readpackage = unpack_f(unpack_package)
 
+--[[
 local index = 1
 local handshake = string.format("%s@%s#%s:%d", crypt.base64encode(token.user), crypt.base64encode(token.server),crypt.base64encode(subid) , index)
 local hmac = crypt.hmac64(crypt.hashkey(handshake), secret)
+]]
+local index = 1
+local handshake = string.format("%s:%s:%s:%s:%s", token.user, token.server, token.pass, subid, index)
+print(handshake)
 
-send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
+--send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
+send_package(fd, handshake)
 
 local result = readpackage()
 print(result)
@@ -274,7 +283,7 @@ local buffer = protobuf.encode("PROTOCOL.create_role_rsp", req[7])
 local t = protobuf.decode("PROTOCOL.create_role_rsp", buffer)
 ]]
 
-
+--[[
 local buffer
 local itype = 6
 if itype == 0 then
@@ -290,6 +299,7 @@ else
 	buffer = protobuf.encode("PROTOCOL.buildaction_req", req[itype])
 	send_package(fd, p.pack(1,PCMD_BUILDACTION_REQ,buffer))
 end
+]]
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()

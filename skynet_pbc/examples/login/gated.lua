@@ -27,7 +27,7 @@ function server.login_handler(uid, secret)
 		uid = uid,
 		subid = internal_id,
 	}
-
+	print("secret~~~~~~~~~~", secret)
 	-- trash subid (no used)
 	skynet.call(agent, "lua", "login", uid, internal_id, secret)
 
