@@ -65,7 +65,7 @@ function server.auth_handler(token)
 	]]
 
 	local id
-	local type, user, server, password= token:match("(.+):([^@]+)@([^:]+):(.+)")
+	local type, user, server, password= token:match("(.+):([^:]+):([^:]+):(.+)")
 	print(token)
 	print( "rrrrrrrrrrrrrrrrrrrrrrrrrrrrr", type,user,server,password)
 	if tonumber(type) == 0 then --µÇÂ¼
@@ -82,7 +82,8 @@ function server.auth_handler(token)
 end
 
 function server.login_handler(server, uid, secret, id)
-	print(string.format("%s@%s is login, secret is %s", uid, server, crypt.hexencode(secret)))
+	--print(string.format("%s@%s is login, secret is %s", uid, server, crypt.hexencode(secret)))
+	print(string.format("%s@%s is login, secret is %s", uid, server, secret))
 	local gameserver = assert(server_list[server], "Unknown server")
 	-- only one can login, because disallow multilogin
 	local last = user_online[uid]
@@ -94,6 +95,7 @@ function server.login_handler(server, uid, secret, id)
 	end
 	local subid = tostring(skynet.call(gameserver, "lua", "login", uid, secret, id))
 	user_online[uid] = { address = gameserver, subid = subid , server = server}
+	print("subid*********", subid)
 	return subid
 end
 

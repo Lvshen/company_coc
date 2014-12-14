@@ -135,7 +135,9 @@ local function accept(conf, s, fd, addr)
 
 	if ok then
 		err = err or ""
-		write(fd,  "200 "..crypt.base64encode(err).."\n")
+		--print("err = ^^^^^^", err)
+		--write(fd,  "200 "..crypt.base64encode(err).."\n")
+		write(fd,  "200 \n")
 	else
 		write(fd,  "403 Forbidden\n")
 		error(err)

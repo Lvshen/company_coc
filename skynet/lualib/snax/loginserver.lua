@@ -56,8 +56,6 @@ local function launch_slave(auth_handler)
 		-- If the attacker send large package, close the socket
 		socket.limit(fd, 8192)
 
-		--[[
-
 		local challenge = crypt.randomkey()
 		write(fd, crypt.base64encode(challenge).."\n")
 
@@ -83,12 +81,6 @@ local function launch_slave(auth_handler)
 
 		local token = crypt.desdecode(secret, crypt.base64decode(etoken))
 
-		local ok, server, uid, id =  pcall(auth_handler,token)
-
-		]]
-
-		local token = assert_socket(socket.readline(fd),fd)
-		skynet.error("TT~~~~~~~~", token)
 		local ok, server, uid, id =  pcall(auth_handler,token)
 
 		socket.abandon(fd)

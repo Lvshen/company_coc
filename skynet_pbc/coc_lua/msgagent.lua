@@ -59,8 +59,8 @@ local function LoadRoleInfo()
 	skynet.error(skynet.print_r(rsp))
 	local buffer = protobuf.encode("PROTOCOL.load_role_rsp", rsp)
 	local t = protobuf.decode("PROTOCOL.load_role_rsp", buffer)
-	skynet.error("##############################################")
-	skynet.error(skynet.print_r(t))
+	--skynet.error("##############################################")
+	--skynet.error(skynet.print_r(t))
 	send_package(p.pack(1, PCMD_LOADROLE_RSP, buffer))
 end
 

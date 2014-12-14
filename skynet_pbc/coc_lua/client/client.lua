@@ -121,11 +121,11 @@ local function encode_token(token)
 		crypt.base64encode(token.server),
 		crypt.base64encode(token.pass))
 	]]	
-	local str = string.format("%s:%s",token.type,token.user)
-	local type, user, server, password= str:match("(.+):(.+)")
+	local str = string.format("%s:%s:%s:%s",token.type,token.user,token.server,token.pass)
+	local type, user, server, password= str:match("(.+):([^:]+):([^:]+):(.+)")
 	print(str)
 	print( "rrrrrrrrrrrrrrrrrrrrrrrrrrrrr", type,user,server,password)
-	return string.format("%s:%s@%s:%s",token.type,token.user,token.server,token.pass)	
+	return string.format("%s:%s:%s:%s",token.type,token.user,token.server,token.pass)	
 end
 
 --[[
@@ -136,8 +136,8 @@ writeline(fd, crypt.base64encode(etoken))
 
 writeline(fd, encode_token(token))
 
---local result = readline()
-local result = unpack_f(unpack_line)
+local readline = unpack_f(unpack_line)
+local result = readline()
 print(result)
 local code = tonumber(string.sub(result, 1, 3))
 assert(code == 200)
