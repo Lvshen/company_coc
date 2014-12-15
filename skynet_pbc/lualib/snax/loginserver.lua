@@ -75,7 +75,7 @@ local function launch_slave(auth_handler)
 		local hmac = crypt.hmac64(challenge, secret)
 
 		if hmac ~= crypt.base64decode(response) then
-			write(fd, "400 Bad Request\n")
+			write(fd, "400 ad RequestB\n")
 			error "challenge failed"
 		end
 
@@ -116,13 +116,13 @@ local function accept(conf, s, fd, addr)
 	socket.start(fd)
 
 	if not ok then
-		write(fd, "401 Unauthorized\n")
+		write(fd, "401\n")
 		error(server)
 	end
 
 	if not conf.multilogin then
 		if user_login[uid] then
-			write(fd, "406 Not Acceptable\n")
+			write(fd, "406\n")
 			error(string.format("User %s is already login", uid))
 		end
 
@@ -139,7 +139,7 @@ local function accept(conf, s, fd, addr)
 		--write(fd,  "200 "..crypt.base64encode(err).."\n")
 		write(fd,  "200 "..err.."\n")
 	else
-		write(fd,  "403 Forbidden\n")
+		write(fd,  "403\n")
 		error(err)
 	end
 end

@@ -7,7 +7,7 @@ local bit32 = require "bit32"
 
 local protobuf = require "protobuf"
 local p = require "p.core"
---require "protocolcmd"
+require "protocolcmd"
 addr = io.open("./coc_lua/protocol/protocol.pb","rb")
 buffer = addr:read "*a"
 addr:close()
@@ -199,7 +199,6 @@ local function print_package(v)
 		return
 	end
 	print(data.v, data.p)
-	--[[
 	local t
 	if data.p == PCMD_CREATEROLE_RSP then
 		t = protobuf.decode("PROTOCOL.create_role_rsp", string.sub(v, 7))
@@ -221,7 +220,6 @@ local function print_package(v)
 			end
 		end
 	end
-	]]
 end
 
 local function dispatch_package()
@@ -283,9 +281,8 @@ local buffer = protobuf.encode("PROTOCOL.create_role_rsp", req[7])
 local t = protobuf.decode("PROTOCOL.create_role_rsp", buffer)
 ]]
 
---[[
 local buffer
-local itype = 6
+local itype = 1
 if itype == 0 then
 	--print_r(req[itype])
 	buffer = protobuf.encode("PROTOCOL.create_role_req", req[itype])
@@ -299,7 +296,7 @@ else
 	buffer = protobuf.encode("PROTOCOL.buildaction_req", req[itype])
 	send_package(fd, p.pack(1,PCMD_BUILDACTION_REQ,buffer))
 end
-]]
+
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()

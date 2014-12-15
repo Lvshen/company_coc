@@ -169,3 +169,10 @@ message buildaction_rsp
 	optional int32 index = 2;
 	optional int32 value = 3;
 }
+
+/**********************************************fightaction******************************************************/
+
+message fightaction
+{
+	
+}
