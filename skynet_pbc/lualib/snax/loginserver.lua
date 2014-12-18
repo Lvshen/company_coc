@@ -86,9 +86,9 @@ local function launch_slave(auth_handler)
 		local ok, server, uid, id =  pcall(auth_handler,token)
 
 		]]
-
+		
 		local token = assert_socket(socket.readline(fd),fd)
-		skynet.error("TT~~~~~~~~", token)
+		skynet.error("Recive Data: ", token)
 		local ok, server, uid, secret, id =  pcall(auth_handler,token)
 
 		socket.abandon(fd)

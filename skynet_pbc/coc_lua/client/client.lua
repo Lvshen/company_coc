@@ -24,7 +24,7 @@ local next = next
 
 
 
-local fd = assert(socket.connect("127.0.0.1", 8001))
+local fd = assert(socket.connect("192.168.1.250", 8001))
 
 local function print_r(root)
         local cache = {  [root] = "." }
@@ -109,7 +109,7 @@ writeline(fd, crypt.base64encode(hmac))
 local token = { --µÇÂ¼
 	type = 0,
 	server = "gameserver",
-	user = "hello123@163.com",
+	user = "hello123s@163.com",
 	pass = "123456",
 }
 
@@ -135,7 +135,7 @@ writeline(fd, crypt.base64encode(etoken))
 ]]
 
 writeline(fd, encode_token(token))
-
+--writeline(fd, "0:hello123@163.com:gameserver:123456")
 local readline = unpack_f(unpack_line)
 local result = readline()
 print(result)
@@ -150,7 +150,7 @@ local subid = string.sub(result, 5)
 print("~~~login ok, subid=", subid)
 
 -------connect gameserver------------
-local fd = assert(socket.connect("127.0.0.1", 8888))
+local fd = assert(socket.connect("192.168.1.250", 8888))
 
 local function send_package(fd, pack)
 	local size = #pack
@@ -249,7 +249,7 @@ send_package(fd, handshake)
 
 local result = readpackage()
 print(result)
-assert(result == "200 OK")
+assert(result == "200")
 
 
 local req = {

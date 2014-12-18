@@ -1,0 +1,12 @@
+
+PCMD_CREATEROLE_REQ = 1001				--创建角色请求
+
+PCMD_CREATEROLE_RSP = 1002				--返回
+
+PCMD_LOADROLE_REQ = 1003				--角色信息资料请求(空)
+
+PCMD_LOADROLE_RSP = 1004				--返回
+
+PCMD_BUILDACTION_REQ = 1005			--建筑操作请求
+
+PCMD_BUILDACTION_RSP = 1006			--返回

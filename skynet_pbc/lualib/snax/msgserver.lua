@@ -198,11 +198,11 @@ function server.start(conf)
 		print(message,username, server, secret, subid, index)
 		local u = user_online[username]
 		if u == nil then
-			return "404 User Not Found"
+			return "404"
 		end
 		skynet.error(skynet.print_r(u))
 		if secret ~= u.secret then
-			return "401 Unauthorized"
+			return "401"
 		end
 		u.version = idx
 		u.fd = fd
@@ -215,19 +215,19 @@ function server.start(conf)
 		local ok, result = pcall(do_auth, fd, message, addr)
 		if not ok then
 			skynet.error(result)
-			result = "400 Bad Request"
+			result = "400"
 		end
 
 		local close = result ~= nil
 
 		if result == nil then
-			result = "200 OK"
+			result = "200"
 		end
 
 		socketdriver.send(fd, netpack.pack(result))
 
 		--call agent
-		if result ==  "200 OK" then
+		if result ==  "200" then
 			local u = assert(connection[fd], "invalid fd")
 			local ok = pcall(conf.agent_handler, u.username, fd)
 			assert(ok, "auth ok call agent failed")

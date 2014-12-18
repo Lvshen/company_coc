@@ -1,7 +1,7 @@
 root = "./"
 thread = 8
-logger = nil
---logger = "./log/gameserver"
+--logger = nil
+logger = "./log/gameserver"
 logpath = "../"
 harbor = 0
 address = "127.0.0.1:2526"
@@ -15,4 +15,4 @@ lualoader = "lualib/loader.lua"
 snax = root.."coc_lua/?.lua;"..root.."coc_lua/?.lua"
 cpath = root.."cservice/?.so"
 cluster = "./coc_lua/clustername.lua"
--- daemon = "./skynet.pid"
+daemon = "./skynet.pid"

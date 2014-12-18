@@ -5,7 +5,7 @@ local skynet = require "skynet"
 --local logger = require "log"
 
 local server = {
-	host = "127.0.0.1",
+	host = "192.168.1.251",
 	port = 8001,
 	multilogin = false,	-- disallow multilogin
 	name = "login_master",
@@ -65,17 +65,20 @@ function server.auth_handler(token)
 	]]
 
 	local id
+	skynet.error("token before :"..token)
 	local type, user, server, password= token:match("(.+):([^:]+):([^:]+):(.+)")
-	print(token)
-	print( "rrrrrrrrrrrrrrrrrrrrrrrrrrrrr", type,user,server,password)
-	if tonumber(type) == 0 then --µÇÂ¼
+	skynet.error(string.format("token after :%s %s %s %s", type,user,server,password))
+	if tonumber(type) == 0 then 					--µÇÂ¼
 		local r, _id = auth_from_db(user, password)	
 		id = _id
 		assert(r == 0, "user Auth failed r = "..r)
-	else --×¢²á
+	elseif  tonumber(type) == 1 then			 	--×¢²á
 		local r, _id = register_to_db(user, password)	
 		id = _id
 		assert(r == 0, "user register failed r = "..r)
+	else
+		skynet.error("type is invalid!")
+		return
 	end
 	return server, user, password, id 
 	
