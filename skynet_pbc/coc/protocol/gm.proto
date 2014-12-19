@@ -1,0 +1,210 @@
+import "db_cache.proto";
+import "mail.proto";
+
+package GM;
+
+///////////////////////////指定产生的随机事件////////////////////////
+message C2S_RandEventReq
+{
+	required int32 event_id 					= 1; // 事件ID
+}
+
+
+message C2S_QueryPlayerDataReq
+{
+	required int32 player_id 					= 1;
+}
+
+message S2C_QueryPlayerDataRsp
+{
+	required int32 ret_code 					= 1;
+	required int32 player_id 					= 2;
+	optional int32 player_status 				= 3;
+	optional int32 zone_id 						= 4;
+	optional int32 gamesrv_id 					= 5;
+	optional int32 room_number 					= 6;
+	optional int32 seat_number 					= 7;
+	optional DBCACHE.Player player_data 		= 8;	
+}
+
+
+message C2S_OnlinePlayerListReq
+{
+	
+}
+
+message S2C_OnlinePlayerListRsp
+{
+	repeated DBCACHE.PlayerBaseInfo player		= 1;
+	
+}
+
+
+message C2S_BroadcastMailReq
+{
+	required MAIL.Z2M_Send_System_Mail_Req mail = 1;
+}
+
+message S2C_BroadcastMailRsp
+{
+	required int32 ret_code 					= 1;
+}
+
+message C2S_MailToPlayerReq
+{
+	required int32 player_id					= 1;
+	required MAIL.Z2M_Send_System_Mail_Req mail = 2;
+}
+
+message S2C_MailToPlayerRsp
+{
+	required int32 ret_code 					= 1;
+}
+
+enum ChangeType
+{
+	Add											= 0;
+	Remove										= 1;
+	Modify										= 2;
+}
+	
+message TicketChange
+{
+	required int32 ticket_type					= 1;
+	required int32 ticket_count					= 2;
+}
+
+message CardChange
+{	
+	required int32 card_id						= 1;
+	required int32 change_type					= 2;
+}
+
+message C2S_ModifyPlayerDataReq
+{
+	required int32 player_id					= 1;
+	required int32 flag 						= 2;
+	optional int32 marbel_change 				= 3;
+	optional int32 goldcoin_change 				= 4;
+	optional int32 energy_change 				= 5;
+	repeated TicketChange ticket_change			= 6;
+	repeated CardChange card_change				= 7;
+	optional int32 lvl_change                   = 8;
+	optional int32 exp_change                   = 9;
+	optional int32 present_points_change        = 10;
+	optional int32 point_change                 = 11;
+}
+
+message S2C_ModifyPlayerDataRsp
+{
+	required int32 ret_code 					= 1;
+	optional DBCACHE.Player new_player_data 	= 2;	
+}
+
+
+message C2S_ServerStatisticsReq
+{
+	required int32 statistics_type				= 1; //0为全部，1为在线数据，2为运行数据，3为系统数据
+	
+}
+
+message Statistics_Server
+{
+	required uint32 server_id					= 1;
+	required uint32 server_type					= 2;
+	required int32 server_status				= 3;
+	required string server_ip					= 4;
+	required uint32 server_port					= 5;
+	required uint32 active_players				= 6;
+}
+
+message Statistics_Online
+{
+	required uint32 online_players 				= 1;
+	required uint32 ingame_players				= 2;
+	required uint32 playing_players				= 3;
+	
+	repeated Statistics_Server server_list		= 4;
+}
+
+message Statistics_Runtime
+{
+	required uint64 launch_time					= 1; //服务器启动时间
+	required uint64 run_time					= 2; //运行市场
+	required uint64 net_out_size				= 3; //网络输出大小
+	required uint64 net_in_size					= 4; //网络输入大小
+	required uint64 mem_used					= 5;
+	required uint64 cpu_used					= 6;	
+}
+
+message Statistics_System
+{
+	required uint64 sys_mem_used				= 1;
+	required uint64 sys_cpu_used				= 2;
+	required uint64 sys_disk_used				= 3;
+	required uint64 sys_mem_free				= 4;
+	required uint64 sys_cpu_free				= 5;
+	required uint64 sys_disk_free				= 6;
+	required uint64 net_recv					= 7;
+	required uint64 net_send					= 8;
+}
+
+
+message S2C_ServerStatisticsRsp
+{
+	required int32 server_status				= 1;
+	optional Statistics_Online online			= 2;
+	optional Statistics_Runtime runtime			= 3;
+	optional Statistics_System system			= 4;
+	optional string statistics					= 5;
+	
+}
+
+
+message C2S_ResetServerStatusReq
+{
+	required int32 type 						= 1;//0代表全部重置,1为全局配置表（包括卡牌，骰子基础数据，登记表），2为签到表，3为商店表,4为奖励表
+}
+
+message S2C_ResetServerStatusRsp
+{
+	required int32 ret_code 					= 1;
+}
+
+
+message C2S_ControlServerReq
+{
+	required int32 server_id					= 1; //-1代表全区，0为本大区，其他为指定服务器
+	required int32 control_type 				= 2; //0代表暂停，1为恢复，2为关闭
+}
+
+message S2C_ControlServerRsp
+{
+	required int32 ret_code 					= 1;
+}
+
+
+message C2S_BanPlayerReq
+{
+	required int32 player_id					= 1;
+	optional int32 ban_days 					= 2;
+	optional int32 ban_reason 					= 3;
+}
+
+message S2C_BanPlayerRsp
+{
+	required int32 ret_code 					= 1;
+}
+
+message C2S_UnBanPlayerReq
+{
+	required int32 player_id					= 1;
+}
+
+message S2C_UnBanPlayerRsp
+{
+	required int32 ret_code 					= 1;
+}
+
+
+
