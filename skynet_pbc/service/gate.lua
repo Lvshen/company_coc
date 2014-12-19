@@ -21,6 +21,7 @@ function handler.message(fd, msg, sz)
 	-- recv a package, forward it
 	local c = connection[fd]
 	local agent = c.agent
+	--print("handler message :", msg, agent)
 	if agent then
 		skynet.redirect(agent, c.client, "client", 0, msg, sz)
 	else

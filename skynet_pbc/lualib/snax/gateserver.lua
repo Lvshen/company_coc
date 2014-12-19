@@ -54,6 +54,7 @@ function gateserver.start(handler)
 	local MSG = {}
 
 	function MSG.data(fd, msg, sz)
+		print("data", fd, msg, sz)
 		if connection[fd] then
 			handler.message(fd, msg, sz)
 		end
@@ -109,6 +110,7 @@ function gateserver.start(handler)
 			return netpack.filter( queue, msg, sz)
 		end,
 		dispatch = function (_, _, q, type, ...)
+			print("type :", type)
 			queue = q
 			if type then
 				MSG[type](...)
