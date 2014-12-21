@@ -24,7 +24,7 @@ local next = next
 
 
 
-local fd = assert(socket.connect("192.168.1.250", 8001))
+--local fd = assert(socket.connect("192.168.1.250", 8001))
 
 local function print_r(root)
         local cache = {  [root] = "." }
@@ -134,6 +134,7 @@ local b = crypt.base64encode(etoken)
 writeline(fd, crypt.base64encode(etoken))
 ]]
 
+--[[
 writeline(fd, encode_token(token))
 --writeline(fd, "0:hello123@163.com:gameserver:123456")
 local readline = unpack_f(unpack_line)
@@ -148,10 +149,10 @@ socket.close(fd)
 local subid = string.sub(result, 5)
 
 print("~~~login ok, subid=", subid)
-
+]]
 -------connect gameserver------------
-local fd = assert(socket.connect("192.168.1.250", 8888))
-
+local fd = assert(socket.connect("192.168.2.250", 8001))
+print(fd)
 local function send_package(fd, pack)
 	local size = #pack
 	local package = string.char(bit32.extract(size,8,8)) ..
@@ -233,13 +234,14 @@ local function dispatch_package()
 	end
 end
 
-local readpackage = unpack_f(unpack_package)
+--local readpackage = unpack_f(unpack_package)
 
 --[[
 local index = 1
 local handshake = string.format("%s@%s#%s:%d", crypt.base64encode(token.user), crypt.base64encode(token.server),crypt.base64encode(subid) , index)
 local hmac = crypt.hmac64(crypt.hashkey(handshake), secret)
 ]]
+--[[
 local index = 1
 local handshake = string.format("%s:%s:%s:%s:%s", token.user, token.server, token.pass, subid, index)
 print(handshake)
@@ -251,7 +253,7 @@ local result = readpackage()
 print(result)
 assert(result == "200")
 
-
+]]
 local req = {
 	[0] = {name = "Alice"},
 		--[[
@@ -271,6 +273,7 @@ local req = {
 	[5] = {type = 3, move = {id = 103, index = 5, x = 10, y = 55}},
 	[6] = {type = 4, produce = {id = 1001, count = 5, build_id = 115, index = 6}},--, armys={index=1,id=2,sum_count=3,finish=0}
 	[7] = {result=0, roleinfo={name="12442", level = 10, exp = 10, points = 10, gem = 142, goldcoin = 200,max_goldcoin=300,water=23, max_water=5235, build_count =5, armys={index=1,id=2,sum_count=3,finish=0, armys={{id=1,count=3,counting=6,create_time=235235,remain_time=23525}, {index=1,id=2,sum_count=3,finish=0}}}}},
+	[8] = {type = 0, servername = gameserver, user = "hello123s@163.com", pass = "123456"},
 }
 
 --[[
@@ -282,7 +285,7 @@ local t = protobuf.decode("PROTOCOL.create_role_rsp", buffer)
 ]]
 
 local buffer
-local itype = 1
+local itype = 8
 if itype == 0 then
 	--print_r(req[itype])
 	buffer = protobuf.encode("PROTOCOL.create_role_req", req[itype])
@@ -292,6 +295,9 @@ if itype == 0 then
 	send_package(fd, p.pack(1,PCMD_CREATEROLE_REQ,buffer))
 elseif itype == 1 then
 	send_package(fd, p.pack(1,PCMD_LOADROLE_REQ,""))
+elseif itype == 8 then
+	buffer = protobuf.encode("PROTOCOL.login_req", req[itype])
+	send_package(fd, p.pack(1,PCMD_LOGIN_REQ,buffer))
 else
 	buffer = protobuf.encode("PROTOCOL.buildaction_req", req[itype])
 	send_package(fd, p.pack(1,PCMD_BUILDACTION_REQ,buffer))

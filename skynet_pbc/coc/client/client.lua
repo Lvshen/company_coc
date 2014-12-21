@@ -2,12 +2,11 @@ package.cpath = "luaclib/?.so"
 package.path = "lualib/?.lua;coc/?.lua;coc/protocol/?.lua"
 
 local socket = require "clientsocket"
-
-
-local protobuf = require "protobuf"
 local p = require "p.core"
 require "protocolcmd"
-addr = io.open("./coc/protocol/protocol.pb","rb")
+
+local protobuf = require "protobuf"
+addr = io.open("./coc/protocol/login.pb","rb")
 buffer = addr:read "*a"
 addr:close()
 protobuf.register(buffer)
@@ -47,7 +46,7 @@ local function print_r(root)
 end
 
 -------connect gameserver------------
-local fd = assert(socket.connect("192.168.1.251", 8888))
+local fd = assert(socket.connect("192.168.2.250", 8888))
 
 local function send_package(fd, pack)
 	local size = #pack
@@ -98,7 +97,7 @@ local function print_package(v)
 	print(data.v, data.p)
 	local t
 	if data.p == PCMD_LOGIN_RSP then
-		t = protobuf.decode("PROTOCOL.login_rsp", string.sub(v, 7))
+		t = protobuf.decode("LOGIN.login_rsp", string.sub(v, 7))
 	elseif data.p == PCMD_CREATEROLE_RSP then
 		t = protobuf.decode("PROTOCOL.create_role_rsp", string.sub(v, 7))
 	elseif data.p == PCMD_LOADROLE_RSP then
@@ -151,29 +150,29 @@ local req = {
 	[5] = {type = 3, move = {id = 103, index = 5, x = 10, y = 55}},
 	[6] = {type = 4, produce = {id = 1001, count = 5, build_id = 115, index = 6}},--, armys={index=1,id=2,sum_count=3,finish=0}
 	[7] = {result=0, roleinfo={name="12442", level = 10, exp = 10, points = 10, gem = 142, goldcoin = 200,max_goldcoin=300,water=23, max_water=5235, build_count =5, armys={index=1,id=2,sum_count=3,finish=0, armys={{id=1,count=3,counting=6,create_time=235235,remain_time=23525}, {index=1,id=2,sum_count=3,finish=0}}}}},
-	[8] = {type = 1, servername = "gameserver", user = "hello1235@163.com", pass = "123456"},
+	[8] = {type = 0, servername = "gameserver", user = "hello1235SS@163.com", pass = "123456"},
 }
 
 local buffer
 local itype = 8
 if itype == 0 then
 	--print_r(req[itype])
-	buffer = protobuf.encode("PROTOCOL.create_role_req", req[itype])
+	--buffer = protobuf.encode("ACTION.create_role_req", req[itype])
 	--local t = protobuf.decode("PROTOCOL.create_role_req", buffer)
 	--print("##############################################")
 	--print_r(t)
-	send_package(fd, p.pack(1,PCMD_CREATEROLE_REQ,buffer))
+	--send_package(fd, p.pack(1,PCMD_CREATEROLE_REQ,buffer))
 elseif itype == 1 then
 	send_package(fd, p.pack(1,PCMD_LOADROLE_REQ,""))
 elseif itype == 8 then
-	buffer = protobuf.encode("PROTOCOL.login_req", req[itype])
-	local t = protobuf.decode("PROTOCOL.login_req", buffer)
+	buffer = protobuf.encode("LOGIN.login_req", req[itype])
+	local t = protobuf.decode("LOGIN.login_req", buffer)
 	print("##############################################")
 	print_r(t)
 	send_package(fd, p.pack(1,PCMD_LOGIN_REQ,buffer))
 else
-	buffer = protobuf.encode("PROTOCOL.buildaction_req", req[itype])
-	send_package(fd, p.pack(1,PCMD_BUILDACTION_REQ,buffer))
+	--buffer = protobuf.encode("ACTION.buildaction_req", req[itype])
+	--send_package(fd, p.pack(1,PCMD_BUILDACTION_REQ,buffer))
 end
 
 while true do

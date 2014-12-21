@@ -1,79 +1,8 @@
 local skynet = require "skynet"
 local gateserver = require "snax.gateserver"
 local netpack = require "netpack"
-local crypt = require "crypt"
 local socketdriver = require "socketdriver"
 local assert = assert
-local b64encode = crypt.base64encode
-local b64decode = crypt.base64decode
-
---[[
-
-Protocol:
-
-	All the number type is big-endian
-
-	Shakehands (The first package)
-
-	Client -> Server :
-
-	base64(uid)@base64(server)#base64(subid):index:base64(hmac)
-
-	Server -> Client
-
-	XXX ErrorCode
-		404 User Not Found
-		403 Index Expired
-		401 Unauthorized
-		400 Bad Request
-		200 OK
-
-	Req-Resp
-
-	Client -> Server : Request
-		word size (Not include self)
-		string content (size-4)
-		dword session
-
-	Server -> Client : Response
-		word size (Not include self)
-		string content (size-5)
-		byte ok (1 is ok, 0 is error)
-		dword session
-
-API:
-	server.userid(username)
-		return uid, subid, server
-
-	server.username(uid, subid, server)
-		return username
-
-	server.login(username, secret)
-		update user secret
-
-	server.logout(username)
-		user logout
-
-	server.ip(username)
-		return ip when connection establish, or nil
-
-	server.start(conf)
-		start server
-
-Supported skynet command:
-	kick username (may used by loginserver)
-	login username secret  (used by loginserver)
-	logout username (used by agent)
-
-Config for server.start:
-	conf.expired_number : the number of the response message cached after sending out (default is 128)
-	conf.login_handler(uid, secret) -> subid : the function when a new user login, alloc a subid for it. (may call by login server)
-	conf.logout_handler(uid, subid) : the functon when a user logout. (may call by agent)
-	conf.kick_handler(uid, subid) : the functon when a user logout. (may call by login server)
-	conf.request_handler(username, session, msg, sz) : the function when recv a new request.
-	conf.register_handler(servername) : call when gate open
-	conf.disconnect_handler(username) : call when a connection disconnect (afk)
-]]
 
 local server = {}
 

@@ -67,6 +67,11 @@ function command.WriteUserAccount(email, password)
 end
 
 function command.InitUserRole(id, name)
+	local data_key = string.format("role:[%d]:data", id)
+	local build_key = string.format("role:[%d]:build", id)
+	if (exists(data_key)) == 0 then
+		return nil
+	end
 	local now = skynet.time()
 	local init_role = {
 		 name = name, level = 1, exp = 0, points = 0, gem = 500, goldcoin = 750, max_goldcoin = 1000, water = 750, max_water = 750, build_count = 4,
@@ -92,8 +97,6 @@ function command.InitUserRole(id, name)
 	        },
 	        ]]
 	}
-	local data_key = string.format("role:[%d]:data", id)
-	local build_key = string.format("role:[%d]:build", id)
 	local t = {}
 	for key, value in pairs(init_role) do
 		if type(value) == "table" then
@@ -122,7 +125,7 @@ function command.InitUserRole(id, name)
 	table.insert(t, 1, build_key)
 	db:hmset(t)
 	db:exec()
-	return 0, init_role
+	return init_role
 end
 
 local function re_build_finish(build)
@@ -338,6 +341,7 @@ function command.UpdateRoleInfo(id, tab)
 		db:hmset(army_t)
 	end
 	db:exec()
+	return LoadRoleAllInfo(id)
 end
 
 skynet.start(function()

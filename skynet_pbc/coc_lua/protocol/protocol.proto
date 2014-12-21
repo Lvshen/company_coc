@@ -36,6 +36,21 @@ unpack
 
 package PROTOCOL;
 
+//***********************************************login******************************************************************************//
+
+message login_req
+{
+	required int32 type = 1; 					//0 登陆1注册
+	required string servername = 2;				//服务名称gameserver
+	required string user = 3;					//用户名
+	required string pass = 4;					//密码
+}
+
+message login_rsp
+{
+	required int32 ret = 1;						//200成功
+}
+
 //***********************************************roleinfo****************************************************************************//
 //建筑信息
 message build_info

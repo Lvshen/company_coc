@@ -5,7 +5,7 @@ local skynet = require "skynet"
 --local logger = require "log"
 
 local server = {
-	host = "192.168.1.251",
+	host = "192.168.2.250",
 	port = 8001,
 	multilogin = false,	-- disallow multilogin
 	name = "login_master",
@@ -42,38 +42,15 @@ local function register_to_db(user, password)
 end
 
 function server.auth_handler(token)
-
-	--[[
-	-- the token is base64(user)@base64(server):base64(password)
+	
 	local id
-	local type, user, server, password= token:match("(.+):([^@]+)@([^:]+):(.+)")
-	type = crypt.base64decode(type)
-	user = crypt.base64decode(user)
-	server = crypt.base64decode(server)
-	password = crypt.base64decode(password)
-	print( "rrrrrrrrrrrrrrrrrrrrrrrrrrrrr", type,user,server,password)
-	if tonumber(type) == 0 then --µÇÂ¼
-		local r, _id = auth_from_db(user, password)	
+	skynet.error(string.format("token  :%s %s %s %s", token.type,token.user,token.server,token.password))
+	if tonumber(token.type) == 0 then 					--µÇÂ¼
+		local r, _id = auth_from_db(token.user, token.password)	
 		id = _id
 		assert(r == 0, "user Auth failed r = "..r)
-	else --×¢²á
-		local r, _id = register_to_db(user, password)	
-		id = _id
-		assert(r == 0, "user register failed r = "..r)
-	end
-	return server, user, id
-	]]
-
-	local id
-	skynet.error("token before :"..token)
-	local type, user, server, password= token:match("(.+):([^:]+):([^:]+):(.+)")
-	skynet.error(string.format("token after :%s %s %s %s", type,user,server,password))
-	if tonumber(type) == 0 then 					--µÇÂ¼
-		local r, _id = auth_from_db(user, password)	
-		id = _id
-		assert(r == 0, "user Auth failed r = "..r)
-	elseif  tonumber(type) == 1 then			 	--×¢²á
-		local r, _id = register_to_db(user, password)	
+	elseif  tonumber(token.type) == 1 then			 	--×¢²á
+		local r, _id = register_to_db(token.user, token.password)	
 		id = _id
 		assert(r == 0, "user register failed r = "..r)
 	else
@@ -85,7 +62,6 @@ function server.auth_handler(token)
 end
 
 function server.login_handler(server, uid, secret, id)
-	--print(string.format("%s@%s is login, secret is %s", uid, server, crypt.hexencode(secret)))
 	print(string.format("%s@%s is login, secret is %s", uid, server, secret))
 	local gameserver = assert(server_list[server], "Unknown server")
 	-- only one can login, because disallow multilogin

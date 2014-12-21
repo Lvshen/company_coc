@@ -1,3 +1,4 @@
 #!/bin/sh
 
-protoc -o protocol.pb protocol.proto
+protoc -o login.pb login.proto
+protoc -o action.pb action.proto

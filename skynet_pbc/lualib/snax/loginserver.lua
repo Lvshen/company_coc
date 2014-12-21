@@ -1,36 +1,21 @@
+package.path = "./coc_lua/protocol/?.lua;" .. package.path
+
 local skynet = require "skynet"
 local socket = require "socket"
-local crypt = require "crypt"
+local netpack = require "netpack"
+
+local p = require "p.core"
+local protobuf = require "protobuf"
+require "protocolcmd"
+
+addr = io.open("./coc_lua/protocol/protocol.pb","rb")
+buffer = addr:read "*a"
+addr:close()
+protobuf.register(buffer)
+
 local table = table
 local string = string
 local assert = assert
-
---[[
-
-Protocol:
-
-	line (\n) based text protocol
-
-	1. Server->Client : base64(8bytes random challenge)
-	2. Client->Server : base64(8bytes handshake client key)
-	3. Server: Gen a 8bytes handshake server key
-	4. Server->Client : base64(DH-Exchange(server key))
-	5. Server/Client secret := DH-Secret(client key/server key)
-	6. Client->Server : base64(HMAC(challenge, secret))
-	7. Client->Server : DES(secret, base64(token))
-	8. Server : call auth_handler(token) -> server, uid (A user defined method)
-	9. Server : call login_handler(server, uid, secret) ->subid (A user defined method)
-	10. Server->Client : 200 base64(subid)
-
-Error Code:
-	400 Bad Request . challenge failed
-	401 Unauthorized . unauthorized by auth_handler
-	403 Forbidden . login_handler failed
-	406 Not Acceptable . already in login (disallow multi login)
-
-Success:
-	200 base64(subid)
-]]
 
 local socket_error = {}
 local function assert_socket(v, fd)
@@ -55,42 +40,21 @@ local function launch_slave(auth_handler)
 		-- set socket buffer limit (8K)
 		-- If the attacker send large package, close the socket
 		socket.limit(fd, 8192)
-
-		
-		--[[
-		local challenge = crypt.randomkey()
-		write(fd, crypt.base64encode(challenge).."\n")
-
-		local handshake = assert_socket(socket.readline(fd), fd)
-		local clientkey = crypt.base64decode(handshake)
-		if #clientkey ~= 8 then
-			error "Invalid client key"
+		local line = assert_socket(socket.readall(fd),fd)
+		skynet.error("Recive Data: ", line, #line)
+		local msg = netpack.tostring(line, #line)
+		local data = p.unpack(msg)
+		skynet.error("receive ok "..data.v.." "..data.p)
+		if data.p ~= PCMD_LOGIN_REQ then
+			skynet.error("Data Cmd error: ", data.p)	
+			error("clinet request error")
 		end
-		local serverkey = crypt.randomkey()
-		write(fd, crypt.base64encode(crypt.dhexchange(serverkey)).."\n")
-
-		local secret = crypt.dhsecret(clientkey, serverkey)
-
-		local response = assert_socket(socket.readline(fd), fd)
-		local hmac = crypt.hmac64(challenge, secret)
-
-		if hmac ~= crypt.base64decode(response) then
-			write(fd, "400 ad RequestB\n")
-			error "challenge failed"
+		local token , l_error = protobuf.decode("PROTOCOL.login_req", string.sub(msg, 7))
+		if token == false then
+			skynet.error("login_req decode error : "..l_error)
+			return
 		end
-
-		local etoken = assert_socket(socket.readline(fd),fd)
-
-		local token = crypt.desdecode(secret, crypt.base64decode(etoken))
-
-		local ok, server, uid, id =  pcall(auth_handler,token)
-
-		]]
-		
-		local token = assert_socket(socket.readline(fd),fd)
-		skynet.error("Recive Data: ", token)
 		local ok, server, uid, secret, id =  pcall(auth_handler,token)
-
 		socket.abandon(fd)
 		return ok, server, uid, secret, id
 	end

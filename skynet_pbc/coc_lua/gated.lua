@@ -13,7 +13,6 @@ local internal_id = 0
 -- login server disallow multi login, so login_handler never be reentry
 -- call by login server
 function server.login_handler(uid, secret, id)
-	print("test*************", secret)
 	if users[uid] then
 		error(string.format("%s is already login", uid))
 	end

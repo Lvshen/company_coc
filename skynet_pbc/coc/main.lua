@@ -8,6 +8,7 @@ skynet.start(function()
 	--skynet.newservice("debug_console",8000)
 	skynet.newservice("redisdb")
 	skynet.newservice("login")
+	skynet.newservice("gameserver")
 	local watchdog = skynet.newservice("watchdog")
 	skynet.call(watchdog, "lua", "start", {
 		port = 8888,

@@ -1,96 +1,38 @@
-package.path = "./coc/protocol/?.lua;./coc/build/?.lua;" .. package.path
+package.path = "./coc/protocol/?.lua;" .. package.path
 
 local skynet = require "skynet"
 local netpack = require "netpack"
 local socket = require "socket"
---local sproto = require "sproto"
 local bit32 = require "bit32"
 local p = require "p.core"
 require "protocolcmd"
-local protobuf
+
 local CMD = {}
 local client_fd
-
+local user_id
+local role_info
+local gate
 local function send_package(pack)
-
 	local size = #pack
 	local package = string.char(bit32.extract(size,8,8)) ..
 		string.char(bit32.extract(size,0,8))..
 		pack
-
 	socket.write(client_fd, package)
 end
 
-local function CreateRole(msg)
-	local t , l_error = protobuf.decode("PROTOCOL.create_role_req", string.sub(msg, 7))
-	local rsp = {}
-	if t == false then
-		skynet.error("CreateRole decode error : "..l_error)
-		return
-	else
-		if role_info.name ~= nil then
-			rsp["result"] = 1
-			rsp["roleinfo"] = role_info
-		else
-			local result, r = skynet.call("REDISDB", "lua", "InitUserRole", uuid, t.name)
-			rsp["result"] = result
-			rsp["roleinfo"] = r
-		end
-	end
-	skynet.error(skynet.print_r(rsp))
-	local buffer = protobuf.encode("PROTOCOL.create_role_rsp", rsp)
-	send_package(p.pack(1, PCMD_CREATEROLE_RSP, buffer))
+function login(userid)
+	skynet.error(string.format("%s is login", uid))
+	user_id = userid
+	-- you may load user data from database
+
 end
 
-local function LoadRoleInfo()
-	local rsp = {}
-	if role_info.name == nil then
-		rsp["result"] = 1
-	else
-		rsp["result"] = 0
-		rsp["roleinfo"] = role_info
+local function logout()
+	print("enter logout", gate, userid, subid)
+	if gate then
+		skynet.call(gate, "lua", "logout", userid, subid)
 	end
-	skynet.error(skynet.print_r(rsp))
-	local buffer = protobuf.encode("PROTOCOL.load_role_rsp", rsp)
-	local t = protobuf.decode("PROTOCOL.load_role_rsp", buffer)
-	--skynet.error("##############################################")
-	--skynet.error(skynet.print_r(t))
-	send_package(p.pack(1, PCMD_LOADROLE_RSP, buffer))
-end
-
-local function Buildaction(msg)
-	local t , l_error = protobuf.decode("PROTOCOL.buildaction_req", string.sub(msg, 7))
-	local rsp = {}
-	if t == false then
-		skynet.error("Buildaction decode error : "..l_error)
-		return
-	else
-		local result, index, changeinfo, value = buildoperate.build_operate(t, role_info)
-		if result == 0 then
-			UpdateRoleInfo(changeinfo)	
-		end
-		rsp["result"] = result
-		rsp["index"] = index
-		rsp["value"] = value
-		local buffer = protobuf.encode("PROTOCOL.buildaction_rsp", rsp)
-		send_package(p.pack(1, PCMD_BUILDACTION_RSP, buffer))
-	end
-end
-
-local function Auth(msg)
-	local t , l_error = protobuf.decode("PROTOCOL.login_req", string.sub(msg, 7))
-	--skynet.error(skynet.print_r(t))
-	local rsp = {}
-	if t == false then
-		skynet.error("login req decode error : ", l_error, msg)
-		return
-	elseif t.type == 0 then
-		result, id = skynet.call("LOGIN", "lua", "auth", client_fd, t.user, t.pass)
-	elseif t.type == 1 then
-		result, id = skynet.call("LOGIN", "lua", "register", client_fd, t.user, t.pass)
-	else
-		skynet.error("login req type error !")
-	end
+	skynet.exit()
 end
 
 skynet.register_protocol {
@@ -101,66 +43,42 @@ skynet.register_protocol {
 	end,
 	dispatch = function (session, address, msg)
 		data = p.unpack(msg)
-		skynet.error("receive ok ", data.v, data.p, msg)
-		--[[test
-		print("msg size", #string.sub(msg, 7))
-		local t , l_error = protobuf.decode("PROTOCOL.role_info", string.sub(msg, 7))
-		if t == false then
-			skynet.error("test req decode error : ", l_error)
-			return
-		end
-		local rsp = {name = "124", level = 2, exp = 90, points = 23, gem = 3245, goldcoin = 235, max_goldcoin = 2566, water = 235, max_water = 2325, build_count = 34}	
-		local buffer = protobuf.encode("PROTOCOL.role_info", rsp)
-		send_package(p.pack(1, 1002, buffer))
-		skynet.error(skynet.print_r(t))
-		--test end]]
+		skynet.error("receive ok ", data.v, data.p)
 		if data.p == PCMD_LOGIN_REQ then
-			Auth(msg)
+			local result, userid, ret = skynet.call("LOGIN", "lua", "auth", msg)
+			if result ~= nil then
+				send_package(p.pack(1, PCMD_LOGIN_RSP, result))
+				if ret == 200 then
+					login(userid)
+				end
+			end
 		elseif data.p == PCMD_CREATEROLE_REQ then
-			CreateRole(msg)
+			local result = skynet.call("GAMESERVER", "lua", "CreateRole", user_id, msg)
+			if result ~= nil then
+				send_package(p.pack(1, PCMD_CREATEROLE_RSP, result))
+			end
 		elseif data.p == PCMD_LOADROLE_REQ then
-			LoadRoleInfo()
+			local result, roleinfo = skynet.call("GAMESERVER", "lua", "LoadRoleInfo", user_id, role_info)
+			if result ~= nil then
+				role_info = roleinfo
+				send_package(p.pack(1, PCMD_LOADROLE_RSP, result))
+			end
 		elseif data.p == PCMD_BUILDACTION_REQ then
-			Buildaction(msg)
+			local result, roleinfo= skynet.call("GAMESERVER", "lua", "Buildaction", user_id, role_info, msg)
+			if result ~= nil then
+				if roleinfo ~= nil then
+					role_info = roleinfo
+				end
+				send_package(p.pack(1, PCMD_BUILDACTION_RSP, result))
+			end
 		end
 	end
 }
 
---update role_info
-function UpdateRoleInfo(changed_info)
-	--example : changed_info = {level = 1, ..., build = {{ id = 100, level = 1, index = 1,  x = 35, y = 20 },{...},...}}
-	for k, v in pairs(changed_info) do
-		if type(v) == "table" then
-			if k == "build" then
-				local t = role_info.build
-				for _k, _v in pairs(v) do
-					local index = _v.index
-					t["index"] = _v
-				end
-			end
-		else
-			role_info[k] = v
-		end
-	end
-	skynet.call("REDISDB", "lua", "UpdateRoleInfo", uuid, changed_info)
-end
-
 function CMD.start(gate, fd)
---[[
-	skynet.fork(function()
-		while true do
-			send_package(send_request "heartbeat")
-			skynet.sleep(500)
-		end
-	end)
-]]
 	print("new client fd = ", fd)
+	gate = gate
 	client_fd = fd
-	protobuf = require "protobuf"
-	local addr = io.open("./coc/protocol/protocol.pb","rb")
-	local buffer = addr:read "*a"
-	addr:close()
-	protobuf.register(buffer)
 	skynet.call(gate, "lua", "forward", fd)
 end
 
