@@ -46,7 +46,7 @@ local function print_r(root)
 end
 
 -------connect gameserver------------
-local fd = assert(socket.connect("192.168.2.250", 8888))
+--local fd = assert(socket.connect("192.168.1.251", 8888))
 
 local function send_package(fd, pack)
 	local size = #pack
@@ -104,6 +104,9 @@ local function print_package(v)
 		t = protobuf.decode("PROTOCOL.load_role_rsp", string.sub(v, 7))
 	elseif data.p == PCMD_BUILDACTION_RSP then
 		t = protobuf.decode("PROTOCOL.buildaction_rsp", string.sub(v, 7))
+	elseif data.p == PCMD_HEART then
+		print("Have Receive Heart :", v)
+		return
 	end
 	if t == false then
 		print("error :", l_error)
@@ -152,7 +155,34 @@ local req = {
 	[7] = {result=0, roleinfo={name="12442", level = 10, exp = 10, points = 10, gem = 142, goldcoin = 200,max_goldcoin=300,water=23, max_water=5235, build_count =5, armys={index=1,id=2,sum_count=3,finish=0, armys={{id=1,count=3,counting=6,create_time=235235,remain_time=23525}, {index=1,id=2,sum_count=3,finish=0}}}}},
 	[8] = {type = 0, servername = "gameserver", user = "hello1235SS@163.com", pass = "123456"},
 }
+local fd
+for i = 1, 10 do
+	fd = assert(socket.connect("192.168.1.251", 8888))
+	local buffer
+	local itype = 8
+	if itype == 0 then
+		--print_r(req[itype])
+		--buffer = protobuf.encode("ACTION.create_role_req", req[itype])
+		--local t = protobuf.decode("PROTOCOL.create_role_req", buffer)
+		--print("##############################################")
+		--print_r(t)
+		--send_package(fd, p.pack(1,PCMD_CREATEROLE_REQ,buffer))
+	elseif itype == 1 then
+		send_package(fd, p.pack(1,PCMD_LOADROLE_REQ,""))
+	elseif itype == 8 then
+		buffer = protobuf.encode("LOGIN.login_req", req[itype])
+		local t = protobuf.decode("LOGIN.login_req", buffer)
+		print("##############################################")
+		print_r(t)
+		send_package(fd, p.pack(1,PCMD_LOGIN_REQ,buffer))
+	else
+		--buffer = protobuf.encode("ACTION.buildaction_req", req[itype])
+		--send_package(fd, p.pack(1,PCMD_BUILDACTION_REQ,buffer))
+	end
 
+	
+end
+--[[
 local buffer
 local itype = 8
 if itype == 0 then
@@ -174,7 +204,7 @@ else
 	--buffer = protobuf.encode("ACTION.buildaction_req", req[itype])
 	--send_package(fd, p.pack(1,PCMD_BUILDACTION_REQ,buffer))
 end
-
+]]
 while true do
 	dispatch_package()
   	local cmd = socket.readstdin()

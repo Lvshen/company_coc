@@ -22,7 +22,8 @@ local function close_agent(fd)
 end
 
 function SOCKET.close(fd)
-	print("socket close",fd)
+	skynet.error("socket close",fd)
+	pcall(skynet.call, agent[fd], "lua", "logout", false)
 	close_agent(fd)
 end
 

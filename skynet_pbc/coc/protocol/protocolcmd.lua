@@ -1,4 +1,8 @@
 
+PCMD_HEAD = 1							
+
+PCMD_HEART = 1000						--ÐÄÌø
+
 PCMD_LOGIN_REQ = 1001					--µÇÂ¼ÇëÇó
 
 PCMD_LOGIN_RSP = 1002					--·µ»Ø
