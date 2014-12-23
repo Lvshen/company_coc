@@ -14,6 +14,7 @@ function command.auth(token)
 	if t == false then
 		skynet.error("login req decode error : ", l_error)
 	elseif t.type == 0 then
+		skynet.error("Receive Data :", skynet.print_r(t))
 		if user_login[t.user] then
 			ret = 404
 			rsp["ret"] = ret
@@ -38,6 +39,7 @@ function command.auth(token)
 		rsp["ret"] = ret
 		result = protobuf.encode("LOGIN.login_rsp", rsp)
 	elseif t.type == 1 then
+		skynet.error("Receive Data :", skynet.print_r(t))
 		user = {
 			name = t.user,
 			id = skynet.call("REDISDB", "lua", "UserIdFromEmail", t.user)
@@ -54,7 +56,9 @@ function command.auth(token)
 	else
 		skynet.error("login req type error !")
 	end
-	skynet.error(skynet.print_r(user))
+	if result ~= nil then
+		skynet.error("send client msg :", skynet.print_r(rsp))
+	end
 	return result, user, ret
 end
 

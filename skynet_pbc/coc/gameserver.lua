@@ -7,20 +7,25 @@ local command = {}
 
 function command.CreateRole(user_id, msg)
 	local t , l_error = protobuf.decode("ACTION.create_role_req", string.sub(msg, 7))
+	local roleinfo
 	local result
 	local rsp = {}
 	rsp["result"] = 0
 	if t == false then
 		skynet.error("CreateRole decode error : "..l_error)
 	else
-		local r = skynet.call("REDISDB", "lua", "InitUserRole", user_id, t.name)
-		if r == nil then
+		skynet.error("Receive Data :", skynet.print_r(t))
+		roleinfo = skynet.call("REDISDB", "lua", "InitUserRole", user_id, t.name)
+		if roleinfo == nil then
 			rsp["result"] = 1
 		end
-		rsp["roleinfo"] = r
+		rsp["roleinfo"] = roleinfo
 		result = protobuf.encode("ACTION.create_role_rsp", rsp)
 	end
-	return result, r
+	if result ~= nil then
+		skynet.error("send client msg :", skynet.print_r(rsp))
+	end
+	return result, roleinfo
 end
 
 function command.LoadRoleInfo(user_id, role_info)
@@ -37,6 +42,9 @@ function command.LoadRoleInfo(user_id, role_info)
 		rsp["roleinfo"] = role_info
 	end
 	local result = protobuf.encode("ACTION.load_role_rsp", rsp)
+	if result ~= nil then
+		skynet.error("send client msg :", skynet.print_r(rsp))
+	end
 	return result, role_info
 end
 
@@ -48,14 +56,18 @@ function command.Buildaction(user_id, role_info, msg)
 	if t == false then
 		skynet.error("Buildaction decode error : "..l_error)
 	else
+		skynet.error("Receive Data :", skynet.print_r(t))
 		local ret, index, changeinfo, value = buildoperate.build_operate(t, role_info)
 		if ret == 0 then
-			roleinfo = skynet.call("REDISDB", "lua", "UpdateRoleInfo", user_id, changed_info)	
+			roleinfo = skynet.call("REDISDB", "lua", "UpdateRoleInfo", user_id, changeinfo)	
 		end
 		rsp["result"] = ret
 		rsp["index"] = index
 		rsp["value"] = value
 		result = protobuf.encode("ACTION.buildaction_rsp", rsp)
+	end
+	if result ~= nil then
+		skynet.error("send client msg :", skynet.print_r(rsp))
 	end
 	return result, roleinfo
 end

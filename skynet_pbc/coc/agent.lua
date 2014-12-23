@@ -14,7 +14,7 @@ local role_info
 local user
 local gate
 local heartbeat_time
-local HEART_INTERVALTIME = 10
+local HEART_INTERVALTIME = 60
 
 local function send_package(pack)
 	local size = #pack
@@ -27,13 +27,14 @@ end
 local function login(user_)
 	skynet.error(string.format("%s is login", user_.name))
 	user = user_
+	skynet.error(skynet.print_r(user))
 	-- you may load user data from database
 
 end
 
 local function logout(kick_flag)
-	skynet.error("enter logout :", kick_flag, gate, user.name)
 	if user then
+		skynet.error("enter logout :", kick_flag, gate, user.name)
 		skynet.call("LOGIN", "lua", "logout", user.name)
 		user = nil
 	end
@@ -51,7 +52,7 @@ skynet.register_protocol {
 	end,
 	dispatch = function (session, address, msg)
 		data = p.unpack(msg)
-		skynet.error("receive ok ", data.v, data.p)
+		skynet.error("Receive Head Cmd: ", data.v, data.p)
 		heartbeat_time = skynet.time()
 		if data.p == PCMD_LOGIN_REQ then
 			local result, user_, ret = skynet.call("LOGIN", "lua", "auth", msg)
@@ -62,18 +63,22 @@ skynet.register_protocol {
 				end
 			end
 		elseif data.p == PCMD_CREATEROLE_REQ then
-			local result = skynet.call("GAMESERVER", "lua", "CreateRole", user_id, msg)
+			assert(user ~= nil, "user is null, not login!")
+			local result, roleinfo = skynet.call("GAMESERVER", "lua", "CreateRole", user.id, msg)
 			if result ~= nil then
+				role_info = roleinfo
 				send_package(p.pack(PCMD_HEAD, PCMD_CREATEROLE_RSP, result))
 			end
 		elseif data.p == PCMD_LOADROLE_REQ then
-			local result, roleinfo = skynet.call("GAMESERVER", "lua", "LoadRoleInfo", user_id, role_info)
+			assert(user ~= nil, "user is null, not login!")
+			local result, roleinfo = skynet.call("GAMESERVER", "lua", "LoadRoleInfo", user.id, role_info)
 			if result ~= nil then
 				role_info = roleinfo
 				send_package(p.pack(PCMD_HEAD, PCMD_LOADROLE_RSP, result))
 			end
 		elseif data.p == PCMD_BUILDACTION_REQ then
-			local result, roleinfo= skynet.call("GAMESERVER", "lua", "Buildaction", user_id, role_info, msg)
+			assert(user ~= nil, "user is null, not login!")
+			local result, roleinfo= skynet.call("GAMESERVER", "lua", "Buildaction", user.id, role_info, msg)
 			if result ~= nil then
 				if roleinfo ~= nil then
 					role_info = roleinfo

@@ -69,7 +69,8 @@ end
 function command.InitUserRole(id, name)
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)
-	if (exists(data_key)) == 0 then
+	--skynet.error("test#########", exists(data_key))
+	if (exists(data_key)) == true then
 		return nil
 	end
 	local now = skynet.time()
@@ -177,7 +178,7 @@ function command.LoadRoleAllInfo(id)
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)
 	local armys_key = string.format("role:[%d]:army", id)
-	if (exists(data_key)) == 0 then
+	if (exists(data_key)) == false then
 		return nil
 	end
 	
@@ -260,8 +261,8 @@ end
 function UpdateBuild(id, tab_build)
 	assert(type(tab_build) == "table", "data is error")
 	local key = string.format("role:[%d]:build", id)
-	skynet.error(skynet.print_r(tab_build))
-	assert(db:exists(key) == true, "key: "..key.." not exists")
+	--skynet.error(skynet.print_r(tab_build))
+	assert(exists(key) == true, "key: "..key.." not exists")
 	local t = {}
 	for k, v in pairs(tab_build) do
 		if type(v) == "table" then 
@@ -277,7 +278,7 @@ function UpdateArmy(id, tab_army)
 	assert(type(tab_army) == "table", "data is error")
 	local key = string.format("role:[%d]:army", id)
 	--skynet.error(skynet.print_r(tab_army))
-	assert(db:exists(key) == true, "key: "..key.." not exists")
+	assert(exists(key) == true, "key: "..key.." not exists")
 	local t = {}
 	for k, v in pairs(tab_army) do
 		if type(v) == "table" then 
@@ -290,7 +291,8 @@ function UpdateArmy(id, tab_army)
 end
 
 function command.UpdateRoleInfo(id, tab)
-	assert(type(tab) == "table", "data is error")
+	skynet.error(id, tab)
+	assert(type(tab) == "table", "data is error:")
 	--skynet.error(skynet.print_r(tab))
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)
@@ -341,7 +343,7 @@ function command.UpdateRoleInfo(id, tab)
 		db:hmset(army_t)
 	end
 	db:exec()
-	return LoadRoleAllInfo(id)
+	return command.LoadRoleAllInfo(id)
 end
 
 skynet.start(function()
@@ -352,7 +354,7 @@ skynet.start(function()
         --auth = "foobared"
     	}
 	skynet.dispatch("lua", function(session, address, cmd, ...)
-		print("my_redis cmd=", cmd)
+		--print("my_redis cmd=", cmd)
 		--local f = command[string.upper(cmd)]
 		local f = command[cmd]
 		if f then

@@ -117,8 +117,8 @@ local function upgrade_build(action, role_info)
 	local index = action.upgrade.index
 	local build_id = action.upgrade.id
 	local build = role_info.builds[index]
-	print("--------------")
-	skynet.print_r(build)
+	--print("--------------")
+	--skynet.print_r(build)
 	if build == nil then
 		skynet.error(string.format("(role not this build) build id : %d (index=%d)is not exist!", tonumber(build_id)), index)
 		return 3
@@ -139,7 +139,7 @@ local function upgrade_build(action, role_info)
 	end
 	
 	local build_lv = tonumber(build.level)
-	print("--------------",build_lv)
+	--print("--------------",build_lv)
 	local lv = build_lv + 1
 	local config = build_config[build_id][lv]
 	--assert(config ~= nil, "build level is Max")
@@ -203,7 +203,7 @@ end
 
 local function place_build(action, role_info)
 	local build_id = action.place.id
-	print("build_id : ", build_id)
+	--print("build_id : ", build_id)
 	local config = build_config[build_id]
 	if config == nil then
 		skynet.error(string.format("(client request error) build id : %d is not exist!", tonumber(build_id)))
