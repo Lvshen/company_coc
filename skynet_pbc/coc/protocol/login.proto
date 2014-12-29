@@ -12,4 +12,5 @@ message login_req
 message login_rsp
 {
 	required int32 ret = 1; 						//200:成功401:用户不存在402:密码错误403:注册失败,用户已存在404:用户已在线
+	optional string name = 2;
 }

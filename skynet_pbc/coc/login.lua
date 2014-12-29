@@ -37,6 +37,7 @@ function command.auth(token)
 			user_login[t.user] = true
 		end
 		rsp["ret"] = ret
+		rsp["name"] = t.user
 		result = protobuf.encode("LOGIN.login_rsp", rsp)
 	elseif t.type == 1 then
 		skynet.error("Receive Data :", skynet.print_r(t))
@@ -52,6 +53,7 @@ function command.auth(token)
 			ret = 403
 		end
 		rsp["ret"] = ret
+		rsp["name"] = t.user
 		result = protobuf.encode("LOGIN.login_rsp", rsp)
 	else
 		skynet.error("login req type error !")

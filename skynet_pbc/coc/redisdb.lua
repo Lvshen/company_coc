@@ -61,7 +61,7 @@ function command.WriteUserAccount(email, password)
 	end
 	local key1 = string.format("account:email:[%s]", email)
 	local key2 = string.format("account:[%d]:password", id)
-	print(key1, id, key2, password)
+	--print(key1, id, key2, password)
 	mset(key1, id, key2, password)
 	return id
 end
