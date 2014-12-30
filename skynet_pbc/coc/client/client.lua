@@ -153,7 +153,7 @@ local req = {
 	[5] = {type = 3, move = {id = 103, index = 5, x = 10, y = 55}},
 	[6] = {type = 4, produce = {id = 1001, count = 5, build_id = 115, index = 6}},--, armys={index=1,id=2,sum_count=3,finish=0}
 	[7] = {result=0, roleinfo={name="12442", level = 10, exp = 10, points = 10, gem = 142, goldcoin = 200,max_goldcoin=300,water=23, max_water=5235, build_count =5, armys={index=1,id=2,sum_count=3,finish=0, armys={{id=1,count=3,counting=6,create_time=235235,remain_time=23525}, {index=1,id=2,sum_count=3,finish=0}}}}},
-	[8] = {type = 0, servername = "gameserver", user = "hello1235SS@163.com", pass = "123456"},
+	[8] = {type = 0, servername = "gameserver", user = "robot67597@dh.com", pass = "123456"},
 }
 
 --[[

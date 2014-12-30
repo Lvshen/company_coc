@@ -1,12 +1,11 @@
 
-‡
+y
 login.protoLOGIN"I
 	login_req
 type (
 
 servername (	
 user (	
-pass (	"&
+pass (	"
 	login_rsp
-ret (
-name (	
+ret (

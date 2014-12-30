@@ -52,7 +52,7 @@ skynet.register_protocol {
 	end,
 	dispatch = function (session, address, msg)
 		data = p.unpack(msg)
-		skynet.error("Receive Head Cmd : ", data.v, data.p)
+		--skynet.error("Receive Head Cmd : ", data.v, data.p)
 		heartbeat_time = skynet.time()
 		if data.p == PCMD_LOGIN_REQ then
 			local result, user_, ret = skynet.call("LOGIN", "lua", "auth", msg)

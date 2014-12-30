@@ -10,7 +10,7 @@ local function set(key, value)
 end
 
 local function mset(...)
-	print(...)
+	--print(...)
 	db:mset(...)
 end
 
@@ -48,6 +48,7 @@ function command.UserIdFromEmail(email)
 end
 
 function command.UserPassFromId(id)
+	skynet.error("#########UserPassFromId###########", type(id), id)
 	local key = string.format("account:[%d]:password", id)
 	return get(key)
 end
@@ -59,9 +60,19 @@ function command.WriteUserAccount(email, password)
 		id = USER_BEGINID
 		set(countkey, id)
 	end
+	--[[
+	local id = tonumber(get(countkey))
+	if id == nil then
+		id = USER_BEGINID
+	else 
+		id = id + 1
+	end
+	set(countkey, id)
+	]]
+	skynet.error("####################", type(id), id)
 	local key1 = string.format("account:email:[%s]", email)
 	local key2 = string.format("account:[%d]:password", id)
-	--print(key1, id, key2, password)
+	skynet.error("##############", key1, id, key2, password)
 	mset(key1, id, key2, password)
 	return id
 end
@@ -111,7 +122,7 @@ function command.InitUserRole(id, name)
 		end		
 	end
 	table.insert(t, 1, data_key)
-	db:multi()
+	--db:multi()
 	db:hmset(t)
 	t = {}
 	for key, value in pairs(init_role.builds) do
@@ -125,7 +136,7 @@ function command.InitUserRole(id, name)
 	end
 	table.insert(t, 1, build_key)
 	db:hmset(t)
-	db:exec()
+	--db:exec()
 	return init_role
 end
 
@@ -174,6 +185,8 @@ local function re_armys_finish(army_info)
 	end
 end
 
+--[[
+--ÊÂÎñËø
 function command.LoadRoleAllInfo(id)
 	local data_key = string.format("role:[%d]:data", id)
 	local build_key = string.format("role:[%d]:build", id)
@@ -241,6 +254,67 @@ function command.LoadRoleAllInfo(id)
 		end
 	end
 	--skynet.error("*************"..skynet.print_r(r))
+	return r
+end
+]]
+
+function command.LoadRoleAllInfo(id)
+	local data_key = string.format("role:[%d]:data", id)
+	local build_key = string.format("role:[%d]:build", id)
+	local armys_key = string.format("role:[%d]:army", id)
+	if (exists(data_key)) == false then
+		return nil
+	end
+	
+	local r = {}
+	r["builds"] = {}
+	r["armys"] = {}
+	--print("&&&&&&&&&&&&&", r.builds)
+	local data = db:hgetall(data_key)
+	for i = 1, #data / 2 do
+	 	local key = data[2*i - 1];
+	 	if key == "armylvs" then
+			r[key] =  table.loadstring(data[2*i])
+	 	else
+	       	r[key] = data[2*i]
+	       end
+	end			
+	local build = db:hgetall(build_key)
+	local tab_build = {}
+	local update_flag = false
+	for i = 1, #build/2 do
+		local temp_t = table.loadstring(build[2*i])
+		if temp_t.build_time ~= nil and re_build_finish(temp_t) == true then
+			table.insert(tab_build, temp_t)
+			update_flag = true
+		end
+		--print("@@@@@@@@", tonumber(v[2*i - 1]))
+		r.builds[tonumber(build[2*i - 1])] = temp_t 
+	end
+	if update_flag == true then
+		UpdateBuild(id, tab_build)
+	end
+	local army = db:hgetall(armys_key) --k==3
+	local tab_army = {}
+	--tab_army["armys"] = {}
+	update_flag = false
+	for i = 1, #army/2 do
+		local temp_t = table.loadstring(army[2*i])
+		if temp_t.finish == 0 then
+			tab_army[tonumber(army[2*i - 1])] = {}
+			re_armys_finish(temp_t)
+			--table.insert(tab_army, temp_t)
+			tab_army[tonumber(army[2*i - 1])] = temp_t
+			update_flag = true
+		end
+		r.armys[tonumber(army[2*i - 1])] = temp_t
+	end
+	if update_flag == true then
+		skynet.error("$$$$$$$$$$"..skynet.print_r(tab_army))
+		UpdateArmy(id, tab_army)
+	end
+	
+	skynet.error("*************"..skynet.print_r(r))
 	return r
 	
 end
@@ -332,7 +406,7 @@ function command.UpdateRoleInfo(id, tab)
 	table.insert(data_t, 1, data_key)
 	table.insert(build_t, 1, build_key)
 	table.insert(army_t, 1, army_key)
-	db:multi()
+	--db:multi()
 	if empty_data == false then
 		db:hmset(data_t)
 	end
@@ -342,7 +416,7 @@ function command.UpdateRoleInfo(id, tab)
 	if empty_army == false then
 		db:hmset(army_t)
 	end
-	db:exec()
+	--db:exec()
 	return command.LoadRoleAllInfo(id)
 end
 

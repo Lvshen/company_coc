@@ -23,7 +23,7 @@ function command.auth(token)
 		end
 		user = {
 			name = t.user,
-			id = skynet.call("REDISDB", "lua", "UserIdFromEmail", t.user)
+			id = tonumber(skynet.call("REDISDB", "lua", "UserIdFromEmail", t.user))
 		}
 		if user.id == nil then
 			--user not exist
@@ -37,13 +37,13 @@ function command.auth(token)
 			user_login[t.user] = true
 		end
 		rsp["ret"] = ret
-		rsp["name"] = t.user
+		--rsp["name"] = t.user
 		result = protobuf.encode("LOGIN.login_rsp", rsp)
 	elseif t.type == 1 then
 		skynet.error("Receive Data :", skynet.print_r(t))
 		user = {
 			name = t.user,
-			id = skynet.call("REDISDB", "lua", "UserIdFromEmail", t.user)
+			id = tonumber(skynet.call("REDISDB", "lua", "UserIdFromEmail", t.user))
 		}
 		if user.id == nil then
 			user.id = skynet.call("REDISDB", "lua", "WriteUserAccount", t.user, t.pass)
@@ -53,7 +53,7 @@ function command.auth(token)
 			ret = 403
 		end
 		rsp["ret"] = ret
-		rsp["name"] = t.user
+		--rsp["name"] = t.user
 		result = protobuf.encode("LOGIN.login_rsp", rsp)
 	else
 		skynet.error("login req type error !")

@@ -20,6 +20,7 @@ function gateserver.openclient(fd)
 end
 
 function gateserver.closeclient(fd)
+	skynet.error("closeclient :", fd)
 	local c = connection[fd]
 	if c then
 		connection[fd] = false
@@ -79,18 +80,21 @@ function gateserver.start(handler)
 		connection[fd] = true
 		client_number = client_number + 1
 		handler.connect(fd, msg)
+		skynet.error(" Open Now client_number is ", client_number)
 	end
 
 	local function close_fd(fd)
-		--print("close_fd :", fd)
 		local c = connection[fd]
+		skynet.error("close_fd :", fd, c)
 		if c ~= nil then
 			connection[fd] = nil
 			client_number = client_number - 1
+			skynet.error(" Close Now client_number is ", client_number)
 		end
 	end
 
 	function MSG.close(fd)
+		skynet.error("Gateserver msg close", fd)
 		if handler.disconnect then
 			handler.disconnect(fd)
 		end
