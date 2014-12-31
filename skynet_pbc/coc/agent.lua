@@ -106,7 +106,7 @@ function CMD.start(gate_, fd)
 				break
 			end
 			send_package(p.pack(PCMD_HEAD, PCMD_HEART, ""))
-			skynet.sleep(500)
+			skynet.sleep(1500)
 			--print("Is in online !")
 		end
 	end)

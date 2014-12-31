@@ -5,7 +5,7 @@ local max_client = 5000
 skynet.start(function()
 	print("Server start")
 	--local console = skynet.newservice("console")
-	--skynet.newservice("debug_console",8000)
+	skynet.newservice("debug_console",8000)
 	skynet.newservice("redisdb")
 	skynet.newservice("login")
 	skynet.newservice("gameserver")

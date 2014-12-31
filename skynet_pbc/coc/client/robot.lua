@@ -69,7 +69,7 @@ function robot:start()
 	end)
 end
 
-function robot:roleinfo(t)
+function robot:get_roleinfo(t)
 	self.roleinfo = t
 	skynet.error(skynet.print_r(t))
 end
@@ -81,7 +81,7 @@ function robot:create_role()
 end
 
 function robot:load_role()
-	send_package(fd, p.pack(1,PCMD_LOADROLE_REQ,""))
+	send_package(self.fd, p.pack(1,PCMD_LOADROLE_REQ,""))
 end
 
 -- ################ robot management ################
@@ -203,7 +203,7 @@ local function un_package(v, fd)
 		if t == false then
 			skynet.error("createrole rsp decode error : ", l_error)
 		else
-			onerobot:roleinfo(t.roleinfo)	
+			onerobot:get_roleinfo(t.roleinfo)	
 			onerobot:load_role()
 		end
 	elseif data.p == PCMD_LOADROLE_RSP then
@@ -211,7 +211,7 @@ local function un_package(v, fd)
 		if t == false then
 			skynet.error("loadrole rsp decode error : ", l_error)
 		elseif t.result == 0 then
-			onerobot:roleinfo(t.roleinfo)	
+			onerobot:get_roleinfo(t.roleinfo)	
 		elseif t.result == 1 then
 			onerobot:create_role()
 		else
@@ -327,7 +327,7 @@ skynet.start(function()
 	
 	math.randomseed(os.time())
 
-	launch_robots(1000)
+	launch_robots(250)
 	--[[
 	skynet.fork(function()
 		while true do

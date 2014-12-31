@@ -810,6 +810,7 @@ report_accept(struct socket_server *ss, struct socket *s, struct socket_message 
 	socklen_t len = sizeof(u);
 	int client_fd = accept(s->fd, &u.s, &len);
 	if (client_fd < 0) {
+		//printf("accept error : %s\n", strerror(errno));
 		return 0;
 	}
 	int id = reserve_id(ss);
