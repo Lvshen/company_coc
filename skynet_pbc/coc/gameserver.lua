@@ -72,6 +72,40 @@ function command.Buildaction(user_id, role_info, msg)
 	return result, roleinfo
 end
 
+local function GetBuilds(id)
+	return skynet.call("REDISDB", "lua", "GetBuilds", id)
+end
+
+function command.EnterPlace(money, msg)
+	local t , l_error = protobuf.decode("ACTION.enteraction_req", string.sub(msg, 7))
+	local result
+	local rsp = {}
+	rsp.ret = 0
+	if t == false then
+		skynet.error("Enteraction decode error : "..l_error)
+		return nil
+	end
+	local builds = GetBuilds(t.id)
+	if builds == nil then
+		rsp.ret = 2
+		result = protobuf.encode("ACTION.enteraction_rsp", rsp)
+		return result
+	end
+	if t.type == 1 then
+		local need_money
+		if money < need_money then
+			rsp.ret = 3
+		end
+	end
+	rsp.builds = builds
+	result = protobuf.encode("ACTION.enteraction_rsp", rsp)
+	return result
+end
+
+function command.Attack(attacked_id, role_info)
+	local need_attack_money
+	if role_info
+end
 
 skynet.start(function()
 	skynet.dispatch("lua", function(session, address, cmd, ...)

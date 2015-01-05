@@ -136,7 +136,21 @@ message buildaction_rsp
 
 /**********************************************fightaction******************************************************/
 
-message fightaction
+//观察/攻击进入玩家领地
+message enteraction_req						
 {
-	
+	required int32 id = 1;							//被玩家ID
+	required int32 type = 2;							//0 侦查模式进入1 攻击模式进入
 }
+
+message enteraction_rsp
+{
+	required int32 ret = 1;							//0 进入成功2 玩家不存在3 金钱不足
+	repeated build_info builds = 2; 					//玩家建筑信息
+}
+
+message attackaction_req
+{
+	required int32 id = 1;							//被玩家ID
+}
+

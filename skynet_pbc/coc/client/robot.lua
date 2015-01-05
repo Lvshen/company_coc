@@ -33,7 +33,7 @@ function robot:create(name, password)
 end
 
 function robot:connect()
-	local fd = socket.connect("192.168.1.251", 8888)
+	local fd = socket.connect("192.168.1.250", 8888)
 	return fd
 end
 
@@ -327,7 +327,7 @@ skynet.start(function()
 	
 	math.randomseed(os.time())
 
-	launch_robots(250)
+	launch_robots(5000)
 	--[[
 	skynet.fork(function()
 		while true do

@@ -310,13 +310,11 @@ function command.LoadRoleAllInfo(id)
 		r.armys[tonumber(army[2*i - 1])] = temp_t
 	end
 	if update_flag == true then
-		skynet.error("$$$$$$$$$$"..skynet.print_r(tab_army))
+		--skynet.error("$$$$$$$$$$"..skynet.print_r(tab_army))
 		UpdateArmy(id, tab_army)
 	end
-	
-	skynet.error("*************"..skynet.print_r(r))
+	--skynet.error("*************"..skynet.print_r(r))
 	return r
-	
 end
 
 local function UpdateData(id, tab_data)
@@ -418,6 +416,58 @@ function command.UpdateRoleInfo(id, tab)
 	end
 	--db:exec()
 	return command.LoadRoleAllInfo(id)
+end
+
+function command.GetBuilds(id)
+	local build_key = string.format("role:[%d]:build", id)
+	if exists(build_key) == true then
+		skynet.error("build_key: "..build_key.." not exists")
+		return nil
+	end
+	local build = db:hgetall(build_key)
+	local tab_build = {}
+	local builds = {}
+	local update_flag = false
+	for i = 1, #build/2 do
+		local temp_t = table.loadstring(build[2*i])
+		if temp_t.build_time ~= nil and re_build_finish(temp_t) == true then
+			table.insert(tab_build, temp_t)
+			update_flag = true
+		end
+		--print("@@@@@@@@", tonumber(v[2*i - 1]))
+		builds[tonumber(build[2*i - 1])] = temp_t 
+	end
+	if update_flag == true then
+		UpdateBuild(id, tab_build)
+	end
+	return builds
+end
+
+function command.GetArmys(id)
+	local army_key = string.format("role:[%d]:army", id)
+	if exists(army_key) == true then
+		skynet.error("army_key: "..build_key.." not exists")
+		return nil
+	end
+	local army = db:hgetall(armys_key) 
+	local tab_army = {}
+	local armys = {}
+	update_flag = false
+	for i = 1, #army/2 do
+		local temp_t = table.loadstring(army[2*i])
+		if temp_t.finish == 0 then
+			--tab_army[tonumber(army[2*i - 1])] = {}
+			re_armys_finish(temp_t)
+			tab_army[tonumber(army[2*i - 1])] = temp_t
+			update_flag = true
+		end
+		armys[tonumber(army[2*i - 1])] = temp_t
+	end
+	if update_flag == true then
+		--skynet.error("$$$$$$$$$$"..skynet.print_r(tab_army))
+		UpdateArmy(id, tab_army)
+	end
+	return armys
 end
 
 skynet.start(function()

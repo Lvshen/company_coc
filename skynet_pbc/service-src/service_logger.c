@@ -7,11 +7,16 @@
 #include <sys/time.h>
 #include <string.h>
 
+const int PETLOG_DEFAULT_MAX_FILE_NUM = 16;
+const int PETLOG_DEFAULT_MAX_FILE_SIZE = 1024000000;
+const int PETLOG_DEFAULT_MIN_FILE_SIZE = 10240000;
+
 struct logger {
 	FILE * handle;
 	char fileName[256];
 	int close;
 	int uLogFileName;
+	int iFileNum;
 };
 
 struct logger *
@@ -20,6 +25,7 @@ logger_create(void) {
 	inst->handle = NULL;
 	inst->close = 0;
 	inst->uLogFileName = 0;
+	inst->iFileNum = 0;
 	memset(inst->fileName, 0 , sizeof(inst->fileName));
 	return inst;
 }

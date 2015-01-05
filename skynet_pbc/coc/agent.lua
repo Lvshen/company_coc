@@ -85,6 +85,12 @@ skynet.register_protocol {
 				end
 				send_package(p.pack(PCMD_HEAD, PCMD_BUILDACTION_RSP, result))
 			end
+		elseif data.p == PCMD_ENTERACTION_REQ then
+			assert(user ~= nil or role_info ~= nil, "user is null, not login!")
+			local result = skynet.call("GAMESERVER", "lua", "Buildaction", role_info.goldcoin, msg)
+			if result ~= nil then
+				send_package(p.pack(PCMD_HEAD, PCMD_ENTERACTION_RSP, result))
+			end
 		end
 	end
 }
