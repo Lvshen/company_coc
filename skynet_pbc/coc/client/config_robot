@@ -5,9 +5,10 @@ lualoader = "lualib/loader.lua"
 luaservice = root.."service/?.lua;"..root.."coc/?.lua;"..root.."coc/protocol/?.lua;"..root.."coc/client/?.lua"
 snax = root.."coc/?.lua;"..root.."coc/?.lua;"
 cpath = root.."cservice/?.so"
-logger = nil
+--logger = nil
+logger = "./log/robot/"
 harbor = 0
 address = "127.0.0.1:2530"
 --master = "127.0.0.1:2013"
 start = "main_robot"
-
+--daemon = "./robot.pid"

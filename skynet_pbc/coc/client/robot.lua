@@ -33,7 +33,7 @@ function robot:create(name, password)
 end
 
 function robot:connect()
-	local fd = socket.connect("192.168.1.250", 8888)
+	local fd = socket.connect("192.168.1.251", 8888)
 	return fd
 end
 
@@ -71,7 +71,7 @@ end
 
 function robot:get_roleinfo(t)
 	self.roleinfo = t
-	skynet.error(skynet.print_r(t))
+	--skynet.error(skynet.print_r(t))
 end
 
 function robot:create_role()
@@ -220,13 +220,16 @@ local function un_package(v, fd)
 	elseif data.p == PCMD_BUILDACTION_RSP then
 		t, l_error = protobuf.decode("PROTOCOL.buildaction_rsp", string.sub(v, 7))
 	elseif data.p == PCMD_HEART then
-		--skynet.error("Have Receive Heart fd:", fd)
+		if onerobot.roleinfo ~= nil then
+			skynet.error(onerobot.roleinfo.name.." Have Receive Heart fd:", fd)
+		end
 		send_package(fd, p.pack(PCMD_HEAD, PCMD_HEART, ""))
 		return
 	end
 	if t == false then
 		skynet.error("error :", l_error)
 	else
+	--[[
 		for k,v in pairs(t) do
 			if type(k) == "string" then
 				if type(v) == "table" then
@@ -236,6 +239,7 @@ local function un_package(v, fd)
 				end
 			end
 		end
+	]]
 	end
 end
 
@@ -327,7 +331,7 @@ skynet.start(function()
 	
 	math.randomseed(os.time())
 
-	launch_robots(5000)
+	launch_robots(1000)
 	--[[
 	skynet.fork(function()
 		while true do

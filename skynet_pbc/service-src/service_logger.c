@@ -52,7 +52,7 @@ _logger(struct skynet_context * context, void *ud, int type, int session, uint32
 	{
 		char path[256];
 		inst->uLogFileName = atoi(chTime);
-		sprintf(path, "%s_%d.log", inst->fileName, inst->uLogFileName);
+		sprintf(path, "%s/%d.log", inst->fileName, inst->uLogFileName);
 		inst->handle = fopen(path,"a");
 	}
 	struct timeval tv;
@@ -84,7 +84,7 @@ logger_init(struct logger * inst, struct skynet_context *ctx, const char * parm)
 		t_tm = localtime(&timer); 
 		sprintf(chTime, "%04d%02d%02d%02d", t_tm->tm_year+1900, t_tm->tm_mon+1, t_tm->tm_mday, t_tm->tm_hour);
 		inst->uLogFileName = atoi(chTime);
-		sprintf(path, "%s_%d.log", parm, inst->uLogFileName);
+		sprintf(path, "%s/%d.log", parm, inst->uLogFileName);
 		strcpy(inst->fileName, parm);
 		inst->handle = fopen(path,"a");
 		//printf("file name is %s", inst->fileName);

@@ -24,10 +24,15 @@ local function send_package(pack)
 	socket.write(client_fd, package)
 end
 
+local function clear()
+	role_info = nil
+	user = nil
+end
+
 local function login(user_)
 	skynet.error(string.format("%s is login", user_.name))
 	user = user_
-	skynet.error(skynet.print_r(user))
+	--skynet.error(skynet.print_r(user))
 	-- you may load user data from database
 
 end
@@ -41,6 +46,7 @@ local function logout(kick_flag)
 	if gate and kick_flag then
 		skynet.call(gate, "lua", "kick", client_fd)
 	end
+	clear()
 	skynet.exit()
 end
 
@@ -51,7 +57,7 @@ skynet.register_protocol {
 		return skynet.tostring(msg, sz)
 	end,
 	dispatch = function (session, address, msg)
-		data = p.unpack(msg)
+		local data = p.unpack(msg)
 		--skynet.error("Receive Head Cmd : ", data.v, data.p)
 		heartbeat_time = skynet.time()
 		if data.p == PCMD_LOGIN_REQ then

@@ -1,7 +1,7 @@
 root = "./"
 thread = 8
 --logger = nil
-logger = "./log/gameserver"
+logger = "./log/game/"
 logpath = "../"
 harbor = 0
 address = "127.0.0.1:2526"

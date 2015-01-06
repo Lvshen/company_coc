@@ -103,8 +103,7 @@ function command.EnterPlace(money, msg)
 end
 
 function command.Attack(attacked_id, role_info)
-	local need_attack_money
-	if role_info
+	
 end
 
 skynet.start(function()
